@@ -5,69 +5,51 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/dashboard.css') }}">
+    {% include 'navbar.html' %}
+
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
 
-        .container {
-            max-width: 1200px;
-            margin: 20px auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            grid-gap: 20px;
-            padding: 20px;
-        }
-
-        .card {
-            background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-        }
-
-        .card h2 {
-            font-size: 24px;
-            margin-bottom: 10px;
-        }
-
-        .card p {
-            font-size: 16px;
-            line-height: 1.6;
-        }
     </style>
 </head>
 
-<body>
+<body style="padding-top: 100px;">
+    <h1 class="center">Account Info</h1>
     <div class="container">
         <div class="card">
-            <h2>Users</h2>
-            <p>Total users: 100</p>
-            <p>New users today: 5</p>
-            <a href="#" class="button">View Users</a>
+            <h2>Account to be verified</h2>
+            <p>Total users: {{to_verify}}</p>
+            <a href="/admin/members_info" class="button">View Accounts</a>
         </div>
         <div class="card">
-            <h2>Products</h2>
-            <p>Total products: 50</p>
-            <p>Out of stock: 10</p>
-            <a href="#" class="button">View Products</a>
+            <h2>Total Members</h2>
+            <p>Total users: {{count_user}}</p>
         </div>
+
         <div class="card">
-            <h2>Orders</h2>
-            <p>Total orders: 200</p>
-            <p>Pending orders: 20</p>
-            <a href="#" class="button">View Orders</a>
-        </div>
-        <div class="card">
-            <h2>Sales</h2>
-            <p>Total sales: $5000</p>
-            <p>Sales this month: $1000</p>
-            <a href="#" class="button">View Sales</a>
+            <h2>Deleted Accounts</h2>
+            <p>Total users: {{deleted}}</p>
         </div>
     </div>
+
+    <h1 class="center" style="padding-top: 30px;">Payment Info</h1>
+    <div class="container">
+        <div class="card">
+            <h2>For Payment Approval</h2>
+            <p>Total payment: {{count_user}}</p>
+            <a href="#" class="button">View Payments</a>
+        </div>
+        <div class="card">
+            <h2>Members Not Yet paid</h2>
+            <p>Total members: {{count_user}}</p>
+        </div>
+        <div class="card">
+            <h2>Total Money Collected</h2>
+            <p>Total money: {{count_user}}</p>
+        </div>
+
+    </div>
+
 </body>
 
 </html>

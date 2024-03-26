@@ -10,6 +10,21 @@
 </head>
 
 <body>
+    {% if messager == 'success' %}
+    <script>
+        alert('Registration Successful, please wait for admin to approve your account');
+    </script>
+    {% endif %}
+    {% if messager == 4 %}
+    <script>
+        alert('Account is not yet verified, please wait to be verified or contact an administrator if you think this is a mistake');
+    </script>
+    {% endif %}
+    {% if messager == 5 %}
+    <script>
+        alert('Account was deleted, please contact an administrator if you think this is a mistake');
+    </script>
+    {% endif %}
 
     <div class="left"><img draggable="false" class="image" src="{{ url_for('static', filename='images/logo-b.png') }}"
             alt="logo">
@@ -22,50 +37,62 @@
                         <img draggable="false" src="{{ url_for('static', filename='images/logo-s.png') }}" alt="Avatar"
                             class="avatar">
                         <br><br><br>
+
+
                         <h1 style="color: #545454;">LOGIN</h1>
                     </div>
                     <br><br>
-                    <label for="uname">Username:</label>
-                    {% with messages = get_flashed_messages(category_filter=["username"]) %}
-                    {% if messages %}
-                    {% for message in messages %}
+
+                    {% if messager == 1 %}
+                    <center>
+                        <header class="inv"
+                            style="color:white;box-shadow: 5px 7px 15px black;border: 2px solid red;border-radius: 50px;background-color: red;width:200px">
+                            &#9997 Enter username.
+                        </header>
+                    </center>
+                    {% elif messager == 3 %}
                     <input type="text" name="username" id="uname" class="wrong" pattern="^\S{3,}$"
-                        title="Username must have 3 characters and cannot have spaces" placeholder="Enter Username"
-                        required>
-                    <li style="color: black; text-align: center;">{{ message }}</li>
-                    {% endfor %}
+                        title="Username must have 3 characters and cannot have spaces" placeholder="Enter Username">
+                    <center>
+                        <header
+                            style="color:white;box-shadow: 5px 7px 15px black;border: 2px solid red;border-radius: 50px;background-color: red;width:300px ">
+                            &#10060 Invalid password or username.
+                        </header>
+                    </center>
                     {% else %}
                     <input type="text" name="username" id="uname" pattern="^\S{3,}$"
                         title="Username must have 3 characters and cannot have spaces" placeholder="Enter Username"
-                        autofocus required>
+                        autofocus>
                     <br><br>
                     {% endif %}
-                    {% endwith %}
 
                     <label for="psw">Password:</label>
-                    {% with messages = get_flashed_messages(category_filter=["password"]) %}
-                    {% if messages %}
-                    {% for message in messages %}
+
+                    {% if messager == 2 %}
                     <input type="password" name="password" id="psw" class="wrong" pattern="^\S{3,}$"
-                        title="Password must have 3 characters and cannot have spaces" placeholder="Enter Password"
-                        required>
-                    <li style="color: black; text-align: center;">{{ message }}</li>
-                    {% endfor %}
+                        title="Password must have 3 characters and cannot have spaces" placeholder="Enter Password">
+                    <center>
+                        <header
+                            style="color:white;box-shadow: 5px 7px 15px black;border: 2px solid red;border-radius: 50px;background-color: red;width:200px">
+                            &#9997 Enter password.
+                        </header>
+                    </center>
+                    {% elif messager == 3 %}
+                    <input type="password" name="password" id="psw" class="wrong" pattern="^\S{3,}$"
+                        title="Password must have 3 characters and cannot have spaces" placeholder="Enter Password">
+
                     {% else %}
                     <input type="password" name="password" id="psw" pattern="^\S{3,}$"
-                        title="Password must have 3 characters and cannot have spaces" placeholder="Enter Password"
-                        required>
-                    <br><br>
+                        title="Password must have 3 characters and cannot have spaces" placeholder="Enter Password">
                     {% endif %}
-                    {% endwith %}
-                    <br>
+                    <br><br><br>
                     <input class="button" type="submit" value="Login" name="login">
                 </form>
                 <style>
-                    
+
                 </style>
 
-                <a href="/facereg" class="face-password-link">Face Password</a>
+                <a href="/facelogin" class="face-password-link">Face Password</a>
                 <a href="/register" class="face-password-link">Register</a>
 
             </div>

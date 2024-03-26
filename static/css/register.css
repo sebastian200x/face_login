@@ -139,7 +139,7 @@ label {
     border: 3px solid #ff0000;
 }
 
-.login{
+.login {
     background-color: #545454;
     color: white;
     padding: 15px 0px;
@@ -155,4 +155,16 @@ label {
 
 .login:hover {
     background-color: #767676;
+}
+
+
+.double {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    justify-content: space-around;
+}
+
+.double-double {
+    width: 49%;
 }

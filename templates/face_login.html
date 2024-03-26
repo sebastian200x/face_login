@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Face Login</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/camera.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/face_login.css') }}">
     {% include 'navbar.html' %}
 </head>
 
@@ -17,18 +17,18 @@
         <div class="centered">
             <div class="flex-container centered">
                 {%if message == 1%}
-                <H3>NO such user<br></H3>
+                <H3>Cannot find username, please try again<br></H3>
                 {%endif%}
                 {%if message == 2%}
-                <H3>Not clear<br></H3>
+                <H3>Face not clear, please try again<br></H3>
                 {%endif%}
 
                 {%if message == 3%}
-                <H3>Incorrect face<br></H3>
+                <H3>Face not recognized, please try again<br></H3>
                 {%endif%}
 
                 {%if message == 5%}
-                <H3>Not set face recogonition yet<br></H3>
+                <H3>Face Recognition is not yet configured<br></H3>
                 {%endif%}
 
 
@@ -47,7 +47,7 @@
                     Capture
                 </button>
 
-                <form action="/facereg" method="post" enctype="multipart/form-data">
+                <form action="/facelogin" method="post" enctype="multipart/form-data">
                     <input type="text" required="true" placeholder="Username" name="username" id="username">
 
                     <input type="text" id="pic" name="pic" style="display:none">
@@ -105,6 +105,26 @@
             // Attach the video stream to the video element and autoplay.
             player.srcObject = stream;
         });
+
+    // Check if the browser supports the navigator.mediaDevices.getUserMedia method
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        // Request access to the user's camera
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(function (stream) {
+                // Camera access granted, do something if needed
+                console.log('Camera detected!');
+            })
+            .catch(function (error) {
+                // Camera access denied or not available
+                alert('No camera detected. Please make sure you have a camera connected or enabled.');
+                console.error('No camera detected:', error);
+                window.location.href = "/login";
+            });
+    } else {
+        // Browser does not support getUserMedia
+        console.error('getUserMedia not supported in this browser.');
+        alert('getUserMedia is not supported in this browser. Please use a modern browser that supports camera access.');
+    }
 </script>
 
 

@@ -16,63 +16,75 @@
     <div class="right">
         <div class="centered">
             <center>
-                <h1>Register</h1>
-            </center>
-            <form action="/register" method="post" enctype="multipart/form-data">
-                <label for="username">Username</label>
-                <input type="text" name="username" value="" placeholder="Username" required>
                 {% if (messager == 1 ) %}
-                <center>
-                    <header class="inv"
-                        style="color:white;box-shadow: 5px 7px 15px black;border: 2px solid red;border-radius: 50px;background-color: red;width:200px">
-                        &#9997 Enter username.
-                    </header>
-                    <br>
-                </center>
-                {% endif %}
-                <label for="password">Password</label>
-                <input type="password" name="password" required placeholder="Password">
-                {% if (messager == 2 ) %}
-                <center>
-                    <header
-                        style="color:white;box-shadow: 5px 7px 15px black;border: 2px solid red;border-radius: 50px;background-color: red;width:200px">
-                        &#9997 Enter password.
-                    </header>
-                    <br>
-                </center>
-                {% endif %}
-                <label for="confirm-password">Confirm Password</label>
-                <input type="password" name="confirmation" required placeholder="Confirm Password">
-                {% if (messager == 4 ) %}
-                <center>
-                    <header
-                        style="color:white;box-shadow: 5px 7px 15px black;border: 2px solid red;border-radius: 50px;background-color: red;width:220px">
-                        &#9997 Enter confirm password.
-                    </header>
-                </center>
-                {% endif %}
+                <header
+                    style="color:white;box-shadow: 5px 7px 15px black;border: 2px solid red;border-radius: 50px;background-color: red;width:200px">
+                    &#9997 Enter password.
+                </header>
                 <br>
-                <button class="button" id="hoverinbtn" type="submit">Register</button>
-                <a href="/login" class="login">Back</a>
-
+                {% endif %}
+                {% if (messager == 2 ) %}
+                <header
+                    style="color:white;box-shadow: 5px 7px 15px black;border: 2px solid red;border-radius: 50px;background-color: red;width:220px">
+                    &#9997 Enter confirm password.
+                </header>
+                {% endif %}
                 {% if (messager == 3 ) %}
-                <center>
-                    <br>
-                    <header
-                        style="color:white;box-shadow: 5px 7px 15px black;border: 2px solid red;border-radius: 50px;background-color: red;width:300px ">
-                        &#10060 Enter same password and confirm password.
-                    </header>
-                </center>
+                <br>
+                <header
+                    style="color:white;box-shadow: 5px 7px 15px black;border: 2px solid red;border-radius: 50px;background-color: red;width:300px ">
+                    &#10060 Passwords do not match.
+                </header>
                 {% endif %}
-                {% if (messager == 5 ) %}
-                <center>
+            </center>
+            <form action="/register" method="POST">
+                <h1 class="reg">Register Account</h1>
+                <div class="personal-information">
+                    <h3 class="info">Personal Information</h3>
                     <br>
-                    <header
-                        style="color:white;box-shadow: 5px 7px 15px black;border: 2px solid red;border-radius: 50px;background-color: red;width:220px">
-                        &#9997 Username Already Taken.
-                    </header>
-                </center>
-                {% endif %}
+                    <div class="personal-info">
+                        <div class="personal-info-col"><label for="given-name">Given Name</label></div>
+                        <div class="personal-info-col"><label for="middle-name">Middle Name</label></div>
+                        <div class="personal-info-col"><label for="last-name">Last Name</label></div>
+                        <div class="personal-info-col"><input type="text" name="given_name" required autofocus
+                                placeholder="First Name"></div>
+                        <div class="personal-info-col"><input type="text" name="middle_name" required
+                                placeholder="Middle Name"></div>
+                        <div class="personal-info-col-last"><input type="text" name="last_name" required
+                                placeholder="Last Name"></div>
+                    </div>
+                    <label for="gender">Gender
+                        <select name="gender" name="gender" required>
+                            <option value="" selected hidden>Please select gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                    </label>
+                </div>
+                <div class="account-information">
+                    <br>
+                    <h3 class="info">Account Information</h3>
+
+                    <label for="username">Username</label>
+                    <input type="text" name="username" value="{{ username }}" required disabled>
+                    <p class="note">Please don't forget this, This will be your permanent username</p>
+
+                    <div class="account-info">
+                        <div class="account-info-col"><label for="password">Password</label></div>
+                        <div class="account-info-col"><label for="confirm-password">Confirm Password</label></div>
+                        <div class="account-info-col"> <input type="password" name="password" required
+                                placeholder="Password"class="{% if (messager == 1 ) or (messager == 3 ) %}wrong{% endif %}"></div>
+                        <div class="account-info-col-last"><input type="password" name="confirm" required
+                                placeholder="Confirm Password" class="{% if (messager == 2 ) or (messager == 3 ) %}wrong{% endif %}"></div>
+                    </div>
+
+                    <label for="email">Email
+                        <input type="email" name="email" placeholder="Email" required>
+                    </label>
+
+                    <button class="button" id="hoverinbtn" type="submit">Register</button>
+                    <a href="/login" class="login">Back</a>
+
             </form>
         </div>
     </div>
