@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-gap: 20px;
+            padding: 20px;
+        }
+
+        .card {
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        .card h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            font-size: 16px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="card">
+            <h2>Users</h2>
+            <p>Total users: 100</p>
+            <p>New users today: 5</p>
+            <a href="#" class="button">View Users</a>
+        </div>
+        <div class="card">
+            <h2>Products</h2>
+            <p>Total products: 50</p>
+            <p>Out of stock: 10</p>
+            <a href="#" class="button">View Products</a>
+        </div>
+        <div class="card">
+            <h2>Orders</h2>
+            <p>Total orders: 200</p>
+            <p>Pending orders: 20</p>
+            <a href="#" class="button">View Orders</a>
+        </div>
+        <div class="card">
+            <h2>Sales</h2>
+            <p>Total sales: $5000</p>
+            <p>Sales this month: $1000</p>
+            <a href="#" class="button">View Sales</a>
+        </div>
+    </div>
+</body>
+
+</html>

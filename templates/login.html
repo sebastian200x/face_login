@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+    {% include 'navbar.html' %}
+</head>
+
+<body>
+
+    <div class="left"><img draggable="false" class="image" src="{{ url_for('static', filename='images/logo-b.png') }}"
+            alt="logo">
+    </div>
+    <div class="right">
+        <div class="centered">
+            <div class="flex-container centered">
+                <form action="/login" method="POST" autocomplete="off">
+                    <div class="imgcontainer">
+                        <img draggable="false" src="{{ url_for('static', filename='images/logo-s.png') }}" alt="Avatar"
+                            class="avatar">
+                        <br><br><br>
+                        <h1 style="color: #545454;">LOGIN</h1>
+                    </div>
+                    <br><br>
+                    <label for="uname">Username:</label>
+                    {% with messages = get_flashed_messages(category_filter=["username"]) %}
+                    {% if messages %}
+                    {% for message in messages %}
+                    <input type="text" name="username" id="uname" class="wrong" pattern="^\S{3,}$"
+                        title="Username must have 3 characters and cannot have spaces" placeholder="Enter Username"
+                        required>
+                    <li style="color: black; text-align: center;">{{ message }}</li>
+                    {% endfor %}
+                    {% else %}
+                    <input type="text" name="username" id="uname" pattern="^\S{3,}$"
+                        title="Username must have 3 characters and cannot have spaces" placeholder="Enter Username"
+                        autofocus required>
+                    <br><br>
+                    {% endif %}
+                    {% endwith %}
+
+                    <label for="psw">Password:</label>
+                    {% with messages = get_flashed_messages(category_filter=["password"]) %}
+                    {% if messages %}
+                    {% for message in messages %}
+                    <input type="password" name="password" id="psw" class="wrong" pattern="^\S{3,}$"
+                        title="Password must have 3 characters and cannot have spaces" placeholder="Enter Password"
+                        required>
+                    <li style="color: black; text-align: center;">{{ message }}</li>
+                    {% endfor %}
+                    {% else %}
+                    <input type="password" name="password" id="psw" pattern="^\S{3,}$"
+                        title="Password must have 3 characters and cannot have spaces" placeholder="Enter Password"
+                        required>
+                    <br><br>
+                    {% endif %}
+                    {% endwith %}
+                    <br>
+                    <input class="button" type="submit" value="Login" name="login">
+                </form>
+                <style>
+                    
+                </style>
+
+                <a href="/facereg" class="face-password-link">Face Password</a>
+                <a href="/register" class="face-password-link">Register</a>
+
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

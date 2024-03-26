@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Registration</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/register.css') }}">
+    {% include 'navbar.html' %}
+</head>
+
+<body>
+    <div class="left"><img draggable="false" class="image" src="{{ url_for('static', filename='images/logo-b.png') }}"
+            alt="logo">
+    </div>
+    <div class="right">
+        <div class="centered">
+            <center>
+                <h1>Register</h1>
+            </center>
+            <form action="/register" method="post" enctype="multipart/form-data">
+                <label for="username">Username</label>
+                <input type="text" name="username" value="" placeholder="Username" required>
+                {% if (messager == 1 ) %}
+                <center>
+                    <header class="inv"
+                        style="color:white;box-shadow: 5px 7px 15px black;border: 2px solid red;border-radius: 50px;background-color: red;width:200px">
+                        &#9997 Enter username.
+                    </header>
+                    <br>
+                </center>
+                {% endif %}
+                <label for="password">Password</label>
+                <input type="password" name="password" required placeholder="Password">
+                {% if (messager == 2 ) %}
+                <center>
+                    <header
+                        style="color:white;box-shadow: 5px 7px 15px black;border: 2px solid red;border-radius: 50px;background-color: red;width:200px">
+                        &#9997 Enter password.
+                    </header>
+                    <br>
+                </center>
+                {% endif %}
+                <label for="confirm-password">Confirm Password</label>
+                <input type="password" name="confirmation" required placeholder="Confirm Password">
+                {% if (messager == 4 ) %}
+                <center>
+                    <header
+                        style="color:white;box-shadow: 5px 7px 15px black;border: 2px solid red;border-radius: 50px;background-color: red;width:220px">
+                        &#9997 Enter confirm password.
+                    </header>
+                </center>
+                {% endif %}
+                <br>
+                <button class="button" id="hoverinbtn" type="submit">Register</button>
+                <a href="/login" class="login">Back</a>
+
+                {% if (messager == 3 ) %}
+                <center>
+                    <br>
+                    <header
+                        style="color:white;box-shadow: 5px 7px 15px black;border: 2px solid red;border-radius: 50px;background-color: red;width:300px ">
+                        &#10060 Enter same password and confirm password.
+                    </header>
+                </center>
+                {% endif %}
+                {% if (messager == 5 ) %}
+                <center>
+                    <br>
+                    <header
+                        style="color:white;box-shadow: 5px 7px 15px black;border: 2px solid red;border-radius: 50px;background-color: red;width:220px">
+                        &#9997 Username Already Taken.
+                    </header>
+                </center>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+
+
+</html>
