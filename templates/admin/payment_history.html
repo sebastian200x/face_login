@@ -10,36 +10,150 @@
 </head>
 
 <body style="padding-top: 100px;">
-    <div class="table">
-        <h1>Payment History</h1>
-        <table>
-            <thead>
-                <tr>
-                    <th>Transaction Type</th>
-                    <th>Date Paid</th>
-                    <th>Amount</th>
-                    <th>Manage</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    {% if history %}
-                    {% for histories in history %}
-                    <td>{{ histories[11] }}, {{ histories[9] }} {{ histories[10] }}</td>
-                    <td>{{ histories[5] }}</td>
-                    <td>{{ histories[4] }}</td>
-                    <td>
-                        <form action="/admin/view_history/{{histories[0]}}" method="POST">
-                            <input type="submit" class="btn-view" value="View">
-                        </form>
-                    </td>
-                </tr>
-                {%endfor%}
-                {% else %}
+    <h1>Payment History</h1>
+
+
+
+    <div class="half">
+        <div class="half-half">
+            <h2>For Payment Approval :</h2>
+        </div>
+        <div class="half-half">
+            <input type="text" id="searchapproval" class="search-input"
+                onkeyup="filterTable('searchapproval', 'aprovaltable')" placeholder="Search for info...">
+        </div>
+    </div>
+    <div class="scrollable">
+        <table id="aprovaltable" class="table">
+            <tr>
+                <th class="sort-btn" onclick="sortTable(0, 'aprovaltable')">Transaction Type</th>
+                <th class="sort-btn" onclick="sortTable(1, 'aprovaltable')">Date Paid</th>
+                <th class="sort-btn" onclick="sortTable(2, 'aprovaltable')">Amount</th>
+                <th>Manage</th>
+            </tr>
+            {% if history %}
+            {% for histories in history %}
+            <tr>
+                <td>{{ histories[11] }}, {{ histories[9] }} {{ histories[10] }}</td>
+                <td>{{ histories[5] }}</td>
+                <td>{{ histories[4] }}</td>
+                <td>
+                    <form action="/admin/view_history/{{histories[0]}}" method="POST">
+                        <input type="submit" class="btn-view" value="View">
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+            {% else %}
+            <tr>
                 <td colspan="4">No Result</td>
-                {% endif %}
-            </tbody>
+            </tr>
+            {% endif %}
         </table>
+    </div>
+
+
+    <div class="half">
+        <div class="half-half">
+            <h2>Approved Payment:</h2>
+        </div>
+        <div class="half-half">
+            <input type="text" id="searchApproved" class="search-input"
+                onkeyup="filterTable('searchApproved', 'approvedTable')" placeholder="Search for info...">
+        </div>
+    </div>
+    <div class="scrollable">
+        <table id="approvedTable" class="table">
+            <tr>
+                <th class="sort-btn" onclick="sortTable(0, 'approvedTable')">Transaction Type</th>
+                <th class="sort-btn" onclick="sortTable(1, 'approvedTable')">Date Paid</th>
+                <th>Amount</th>
+                <th>Manage</th>
+            </tr>
+            {% if history %}
+            {% for histories in history %}
+            <tr>
+                <td>{{ histories[11] }}, {{ histories[9] }} {{ histories[10] }}</td>
+                <td>{{ histories[5] }}</td>
+                <td>{{ histories[4] }}</td>
+                <td>
+                    <form action="/admin/view_history/{{histories[0]}}" method="POST">
+                        <input type="submit" class="btn-view" value="View">
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+            {% else %}
+            <tr>
+                <td colspan="4">No Result</td>
+            </tr>
+            {% endif %}
+        </table>
+    </div>
 </body>
+<script>
+    function filterTable(inputId, tableId) {
+        var input, filter, table, tr, td, i, j, txtValue;
+        input = document.getElementById(inputId);
+        filter = input.value.toUpperCase();
+        table = document.getElementById(tableId);
+        tr = table.getElementsByTagName("tr");
+
+        // Loop through all table rows, including the first row (header row)
+        for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td");
+            // Start from index 0 since the first row is included
+            for (j = 0; j < td.length; j++) {
+                txtValue = td[j].textContent || td[j].innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                    break;
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    }
+
+    function sortTable(columnIndex, tableId) {
+        var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+        table = document.getElementById(tableId);
+        switching = true;
+        dir = "asc"; // Set the sorting direction to ascending by default
+
+        while (switching) {
+            switching = false;
+            rows = table.rows;
+
+            for (i = 1; i < (rows.length - 1); i++) {
+                shouldSwitch = false;
+                x = rows[i].getElementsByTagName("td")[columnIndex];
+                y = rows[i + 1].getElementsByTagName("td")[columnIndex];
+
+                if (dir == "asc") {
+                    if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                        shouldSwitch = true;
+                        break;
+                    }
+                } else if (dir == "desc") {
+                    if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                        shouldSwitch = true;
+                        break;
+                    }
+                }
+            }
+            if (shouldSwitch) {
+                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                switching = true;
+                switchcount++;
+            } else {
+                if (switchcount == 0 && dir == "asc") {
+                    dir = "desc";
+                    switching = true;
+                }
+            }
+        }
+    }
+</script>
 
 </html>

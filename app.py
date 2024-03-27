@@ -22,7 +22,7 @@ import bcrypt
 from flask_session import Session
 from tempfile import mkdtemp
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
-from datetime import datetime
+from datetime import datetime, date
 import face_recognition
 from base64 import b64encode, b64decode
 import re
@@ -176,23 +176,30 @@ def login():
             (input_username,),
         )
         user = cursor.fetchone()
+
+        # Check if user exists
+        if user is None:
+            return render_template("login.html", messager=3)
+
         # is user deleted ?
         if user[5] == "no":
             # is user verified ?
             if user[6] == "yes":
-                if user is None or not bcrypt.checkpw(
+                if not bcrypt.checkpw(
                     input_password.encode("utf-8"), user[2].encode("utf-8")
                 ):
                     return render_template("login.html", messager=3)
 
                 # Check if user is admin
                 if user[4] == "yes":
+                    session.clear()
                     session["is_admin"] = "yes"
                     session["fullname"] = str(user[9]) + " " + str(user[11])
                     session["user_id"] = user[0]
                     session["user_type"] = "ADMIN"
                     return redirect(url_for("dashboard"))
                 else:
+                    session.clear()
                     session["is_admin"] = "no"
                     session["fullname"] = str(user[9]) + " " + str(user[11])
                     session["user_id"] = user[0]
@@ -352,7 +359,9 @@ def approve(id):
         cur = conn.cursor()
 
         # Update tbl_useracc
-        cur.execute("UPDATE tbl_useracc SET is_verified = 'yes' WHERE user_id = %s", (id,))
+        cur.execute(
+            "UPDATE tbl_useracc SET is_verified = 'yes' WHERE user_id = %s", (id,)
+        )
 
         # Check if row exists in tbl_property using SELECT query
         cur.execute("SELECT * FROM tbl_property WHERE user_id = %s", (id,))
@@ -361,17 +370,18 @@ def approve(id):
         # If no row exists, INSERT into tbl_property
         if not existing_row:
             cur.execute("INSERT INTO tbl_property (user_id) VALUES (%s)", (id,))
-        
+
         conn.commit()
 
-        flash('User approval successful.', 'success')
+        flash("User approval successful.", "success")
     except Exception as e:
         conn.rollback()
-        flash(f'Error approving user: {str(e)}', 'error')
+        flash(f"Error approving user: {str(e)}", "error")
     finally:
         cur.close()
 
     return redirect(url_for("admin_members_info"))
+
 
 @app.route("/admin/decline/<int:id>", methods=["POST"])
 def decline(id):
@@ -380,17 +390,18 @@ def decline(id):
 
         cur.execute("DELETE FROM tbl_userinfo WHERE user_id = %s", (id,))
         cur.execute("DELETE FROM tbl_useracc WHERE user_id = %s", (id,))
-        
+
         conn.commit()
 
-        flash('User decline successful.', 'success')
+        flash("User decline successful.", "success")
     except Exception as e:
         conn.rollback()
-        flash(f'Error declining user: {str(e)}', 'error')
+        flash(f"Error declining user: {str(e)}", "error")
     finally:
         cur.close()
 
     return redirect(url_for("admin_members_info"))
+
 
 @app.route("/admin/edit_info/<int:id>", methods=["POST", "GET"])
 def admin_edit_info(id):
@@ -431,6 +442,7 @@ def delete_info(id):
         flash(f"Error deleting account: {str(e)}", "error")
 
     return redirect(url_for("admin_members_info"))
+
 
 @app.route("/admin/update_info/<int:id>", methods=["POST", "GET"])
 def update_info(id):
@@ -508,11 +520,12 @@ def admin_payment_history():
     history = conn.cursor()
     history.execute(
         """
-        SELECT tbl_transaction.*, tbl_userinfo.*
-        FROM tbl_transaction
-        JOIN tbl_userinfo ON tbl_userinfo.user_id = tbl_transaction.user_id
-        WHERE tbl_transaction.transc_type != 'reminder'
-        ORDER BY tbl_transaction.date;
+        SELECT tbl_transaction.*, tbl_userinfo.*, tbl_useracc.*
+            FROM tbl_transaction
+            JOIN tbl_userinfo ON tbl_transaction.user_id = tbl_userinfo.user_id
+            JOIN tbl_useracc ON tbl_transaction.user_id = tbl_useracc.user_id
+            WHERE tbl_transaction.transc_type != 'arrangement'
+            ORDER BY tbl_transaction.date;
         """
     )
     history = history.fetchall()
@@ -537,7 +550,7 @@ def admin_payment_arrangement():
                 user_id
             FROM
                 tbl_transaction
-        ) AND tbl_property.total IS NOT NULL AND tbl_useracc.is_admin = 'no' AND tbl_useracc.is_deleted = 'no'  
+        ) AND tbl_property.total IS NOT NULL AND tbl_useracc.is_admin = 'no' AND tbl_useracc.is_deleted = 'no' AND tbl_useracc.is_verified = 'yes'  
         """
     )
     new = new.fetchall()
@@ -546,22 +559,49 @@ def admin_payment_arrangement():
 
 
 @app.route("/admin/payment_arrange/<int:id>", methods=["POST", "GET"])
-def admin_payment_remind(id):
-    reminder = conn.cursor()
-    reminder.execute(
+def admin_payment_arrange(id):
+    arranger = conn.cursor()
+    arranger.execute(
         """
-    SELECT tbl_property.total, tbl_userinfo.*
-    FROM tbl_property
-    JOIN tbl_userinfo ON tbl_userinfo.user_id = %s AND tbl_property.user_id = %s
-    LIMIT 1;
+        SELECT tbl_property.total, tbl_userinfo.*
+        FROM tbl_property
+        JOIN tbl_userinfo ON tbl_userinfo.user_id = %s AND tbl_property.user_id = %s
+        LIMIT 1;
         """,
-        (
-            id,
-            id,
-        ),
+        (id, id),
     )
-    reminder_data = reminder.fetchone()
-    return adminredirect("admin/payment_arrange.html", reminder=reminder_data)
+    arranger_data = arranger.fetchone()
+    return adminredirect(
+        "admin/payment_arrange.html", arrange=arranger_data, today=date.today()
+    )
+
+
+@app.route("/admin/payment_arranged/<int:id>", methods=["POST", "GET"])
+def admin_payment_arranged(id):
+    if request.method == "POST":
+        amount = request.form.get("amount")
+        due_date_str = request.form.get("due")
+
+        # Parse and format the due date
+        try:
+            due_date = datetime.strptime(due_date_str, "%Y-%m-%d").date()
+        except ValueError:
+            return "Error: Invalid date format. Please enter the date in YYYY-MM-DD format."
+
+        update = conn.cursor()
+        update.execute(
+            """
+            INSERT INTO `tbl_transaction` (`user_id`, `balance_debt`, `transc_type`, `date`, `due_date`, `is_verified`) 
+            VALUES 
+            (%s, %s, 'arrangement', NOW(), %s, 'yes');
+            """,
+            (id, amount, due_date),
+        )
+        conn.commit()
+        return redirect(url_for("admin_payment_arrangement"))
+
+    return render_template("payment_arranged.html")
+
 
 @app.route("/member/payment_history", methods=["POST", "GET"])
 def member_payment_history():
@@ -713,4 +753,8 @@ for code in default_exceptions:
     app.errorhandler(code)(errorhandler)
 
 if __name__ == "__main__":
-    app.run(debug=True, port="5696")
+    app.run(debug=True, host="localhost", port=5696)
+
+
+# to make it accessible to other device in the same network use this:
+# flask run --host=0.0.0.0

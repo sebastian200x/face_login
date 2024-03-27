@@ -1,32 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-    <script defer src="{{ url_for('static', filename='face_recognition/face-api.min.js') }}"></script>
-    <script defer src="{{ url_for('static', filename='face_recognition/script.js') }}"></script>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            width: 100vw;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        canvas {
-            position: absolute;
-        }
-    </style>
+    <title>Camera Access</title>
 </head>
-
 <body>
-    <video id="player" width="720" height="560" autoplay muted></video>
-</body>
+    <h1>Camera Access</h1>
+    <video id="video" width="640" height="480" autoplay></video>
+    <button id="captureButton">Capture Image</button>
+    <canvas id="canvas" width="640" height="480" style="display: none;"></canvas>
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const captureButton = document.getElementById('captureButton');
 
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                video.srcObject = stream;
+            })
+            .catch(err => {
+                console.error('Error accessing camera:', err);
+            });
+
+        captureButton.addEventListener('click', () => {
+            const context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            canvas.toBlob(blob => {
+                const formData = new FormData();
+                formData.append('image', blob, 'image.png');
+
+                fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.text())
+                .then(result => {
+                    console.log(result);
+                })
+                .catch(error => {
+                    console.error('Error uploading image:', error);
+                });
+            }, 'image/png');
+        });
+    </script>
+</body>
 </html>

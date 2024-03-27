@@ -10,37 +10,23 @@
 </head>
 
 <body>
-    {% if reminder %}
-    <form action="/admin/payment_remind/remind/{{ reminder[2] }}" method="POST" class="container">
-        <h1>Payment Reminder</h1>
-        <h3 class="name">Name: {{ reminder[5] }} {{ reminder[3] }}, {{ reminder[4] }}</h3>
-        <label for="due">Deadline:</label>
-        <input type="date" id="due" name="due" placeholder="Due date">
-        <label for="amount">Amount:</label>
-        <span class="currency-code">₱ <input type="number" id="amount" name="amount" placeholder="Amount"
-                value="{{ reminder[0] }}" /></span>
-        <input type="submit" class="buton remind" value="Remind">
+    {% if arrange %}
+    <form action="{{ url_for('admin_payment_arranged', id=arrange[2]) }}" method="POST" class="container">
+        <h1>Payment Arrangement</h1>
+        <h3 class="name">Name: {{ arrange[5] }} {{ arrange[3] }}, {{ arrange[4] }}</h3>
+        <span><label for="due">Set deadline this month:</label><input type="date" id="due" name="due"
+                placeholder="Due date" required min="{{ today.strftime('%Y-%m-%d') }}"></span>
+        <span class="currency-code"><label for="amount">Amount:</label>
+            ₱ <input type="number" id="amount" name="amount" placeholder="Amount" value="{{ arrange[0] }}"
+                required /></span>
+        <input type="submit" name="arrange" class="buton remind" value="Remind">
     </form>
     {% else %}
     <script>
         alert("User ID not found")
-        window.location.href = "{{ url_for('admin_payment_reminder') }}";
+        window.location.href = "{{ url_for('payment_arrange') }}";
     </script>
     {% endif %}
 </body>
 
 </html>
-
-<!-- <script>
-    // Get the current date
-    var currentDate = new Date();
-
-    // Add 1 month to the current date
-    var newDate = new Date(currentDate.setMonth(currentDate.getMonth() + 1));
-
-    // Format the new date as "YYYY-MM-DD"
-    var formattedDate = newDate.toISOString().split('T')[0];
-
-    // Set the default value of the input field to the new date
-    document.getElementById("deadline").value = formattedDate;
-</script> -->

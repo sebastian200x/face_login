@@ -50,6 +50,57 @@ td:last-child {
     background-color: #ffd60b;
 }
 
+
+.search-input {
+    width: 100%;
+    padding: 8px;
+    margin: 10px 0;
+    box-sizing: border-box;
+}
+
+/* Style for no results message */
+.no-results {
+    font-style: italic;
+    color: red;
+}
+
+.half {
+    border: 1px solid black;
+    margin-top: 30px;
+    
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+    background-color: #6FB9B9;
+}
+
+.half-half {
+    width: 50%;
+}
+
+/* Style for search input and sorting buttons */
+.sort-btn,
+th {
+    cursor: pointer;
+}
+
+.sort-btn::after {
+    content: '\f0dc';
+    /* FontAwesome sort icon */
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    position: absolute;
+    right: 5px;
+}
+
+.sort-desc::after {
+    content: '\f0de';
+    /* FontAwesome sort descending icon */
+}
+
+
 /* responsive */
 @media screen and (max-width:500px) {
 
