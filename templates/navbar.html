@@ -6,7 +6,7 @@
 <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" /> -->
 
 <nav class="navbar">
-  {% if request.path == '/login' or request.path == '/' or request.path == '/register'%}
+  {% if request.path == '/login' or request.path == '/' or request.path == '/home' %}
   <!--  or request.path == '/member/payment_verification' -->
   <a class="btn disabled">&#8801;</a>
   {% else %}
@@ -34,24 +34,25 @@
       <li class="item {% if request.path == '/admin/payment_reminder' %}active{% endif %}"><a
           href="/admin/payment_reminder"><i class="fa-solid fa-note-sticky"></i> Payment Arrangement</a></li>
       <li class="title">Face Recognition</li>
-      <li class="item {% if request.path == '/faceregister' %}active{% endif %}"><a
-        href="/faceregister"><i class="fa-solid fa-note-sticky"></i> Face Register</a></li>
+      <li class="item {% if request.path == '/faceregister' %}active{% endif %}"><a href="/faceregister"><i
+            class="fa-solid fa-face-smile"></i> Face Register</a></li>
       <li class="item"><a href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
       {% endif %}
 
       {% if session['is_admin'] == 'no' %}
       <li class="divider"></li>
       <li class="title">Payment Management</li>
-      <li class="item {% if request.path == '/member/payment_reminder' %}active{% endif %}"><a
-          href="/member/payment_reminder"><i class="fa-solid fa-bell"></i> Payment Reminder</a></li>
-      <li class="item restrict {% if request.path == '/member/payment' %}active{% endif %}"><a href="/member/payment"><i
+
+      <li class="item {% if request.path == '/member/payment' %}active{% endif %}"><a href="/member/payment"><i
             class="fa-solid fa-money-bill-wave"></i> Members Payment</a></li>
+
       <li class="item {% if request.path == '/member/payment_history' %}active{% endif %}"><a
           href="/member/payment_history"><i class="fa-solid fa-money-check-dollar"></i> Payment
           History</a></li>
-      <li class="item restrict{% if request.path == '/member/payment_verification' %}active{% endif %}"><a
-          href="/member/payment_verification"><i class="fa-solid fa-face-smile"></i>
-          Payment Verification</a></li>
+
+      <li class="title">Face Recognition</li>
+      <li class="item {% if request.path == '/faceregister' %}active{% endif %}"><a href="/faceregister"><i
+            class="fa-solid fa-face-smile"></i> Face Register</a></li>
       <li class="item"><a href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
 
       {% endif %}

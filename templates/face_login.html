@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Face Login</title>
+
     <link rel="stylesheet" href="{{ url_for('static', filename='css/face_login.css') }}">
     {% include 'navbar.html' %}
 </head>
@@ -16,55 +17,63 @@
     <div class="right">
         <div class="centered">
             <div class="flex-container centered">
+                {%if messager == 1%}
+                <script>
+                    alert('Account is not yet verified, please wait to be verified or contact an administrator if you think this is a mistake');
+                    window.location.href = "/login";
+                </script>
+                {%endif%}
+                {%if messager == a%}
+                <script>
+                    alert(a);
+                </script>
+                {%endif%}
+                {%if messager == 2%}
+                <script>
+                    alert('Account was deleted, please contact an administrator if you think this is a mistake');
+                    window.location.href = "/login";
+                </script>
+                {%endif%}
                 {%if message == 1%}
-                <H3>Cannot find username, please try again<br></H3>
+                <H3>
+                    <center>Cannot find username, please try again</center>
+                </H3><br>
                 {%endif%}
                 {%if message == 2%}
-                <H3>Face not clear, please try again<br></H3>
+                <H3>
+                    <center>Face not clear, please try again</center>
+                </H3><br>
                 {%endif%}
-
                 {%if message == 3%}
-                <H3>Face not recognized, please try again<br></H3>
+                <H3>
+                    <center>Face not recognized, please try again</center>
+                </H3><br>
                 {%endif%}
-
                 {%if message == 5%}
-                <H3>Face Recognition is not yet configured<br></H3>
+                <H3>
+                    <center>Face Recognition is not yet configured</center>
+                </H3><br>
                 {%endif%}
-
-
                 <canvas id="canvas">
                 </canvas>
-
                 <button id="stop" onclick="stop()" style="display:none">stop
                 </button>
-
                 <video id="player" autoplay>
                 </video>
-
                 <br>
-
                 <button id="capture" onclick="capture()">
                     Capture
                 </button>
-
                 <form action="/facelogin" method="post" enctype="multipart/form-data">
                     <input type="text" required="true" placeholder="Username" name="username" id="username">
-
                     <input type="text" id="pic" name="pic" style="display:none">
-
                     <button id="scan" class="scan" class="btn btn-primary">Login</button>
                     <a href="/" class="login">Back</a>
-
                 </form>
             </div>
         </div>
     </div>
 </body>
-
-
-
-
-
 <script>
     const player = document.getElementById('player');
     const canvas = document.getElementById('canvas');
@@ -73,59 +82,43 @@
     const scan = document.getElementById('scan');
     const img = document.getElementById('pic');
     const username = document.getElementById('username');
-
     const vgaconstraints = {
         video: { width: { exact: 720 }, height: { exact: 480 } },
     };
-
     function capture() {
+
         canvas.style.position = "relative";
         canvas.style.left = "0%";
         canvas.style.top = "0%";
         canvas.style.width = "720px";
         canvas.style.height = "480px"
-
         context.drawImage(player, 0, 0, canvas.width, canvas.height);
         player.style.display = "none";
         captureButton.style.display = "none";
         scan.style.display = "block";
         username.style.display = "block";
-
+        canvas.style.display = "block";
         cap = canvas.toDataURL('image/png').split(",")[1];
         img.value = cap;
 
+        username.focus();
     }
-
     function stop() {
         player.srcObject.getVideoTracks().forEach(track => track.stop());
     }
-
     navigator.mediaDevices.getUserMedia(vgaconstraints)
         .then((stream) => {
             // Attach the video stream to the video element and autoplay.
             player.srcObject = stream;
         });
 
-    // Check if the browser supports the navigator.mediaDevices.getUserMedia method
-    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        // Request access to the user's camera
-        navigator.mediaDevices.getUserMedia({ video: true })
-            .then(function (stream) {
-                // Camera access granted, do something if needed
-                console.log('Camera detected!');
-            })
-            .catch(function (error) {
-                // Camera access denied or not available
-                alert('No camera detected. Please make sure you have a camera connected or enabled.');
-                console.error('No camera detected:', error);
-                window.location.href = "/login";
-            });
-    } else {
-        // Browser does not support getUserMedia
-        console.error('getUserMedia not supported in this browser.');
-        alert('getUserMedia is not supported in this browser. Please use a modern browser that supports camera access.');
-    }
-</script>
+    navigator.mediaDevices?.getUserMedia({ video: true })?.then(() => console.log('Camera detected!'))
+        .catch((error) => {
+            alert('No camera detected. Please make sure you have a camera connected or enabled.');
+            console.error('No camera detected:', error);
+            window.location.href = "/login";
+        });
 
+</script>
 
 </html>

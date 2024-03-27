@@ -346,6 +346,163 @@ def admin_members_info():
     )
 
 
+@app.route("/admin/accept/<int:id>", methods=["POST"])
+def approve(id):
+    try:
+        cur = conn.cursor()
+
+        # Update tbl_useracc
+        cur.execute("UPDATE tbl_useracc SET is_verified = 'yes' WHERE user_id = %s", (id,))
+
+        # Check if row exists in tbl_property using SELECT query
+        cur.execute("SELECT * FROM tbl_property WHERE user_id = %s", (id,))
+        existing_row = cur.fetchone()
+
+        # If no row exists, INSERT into tbl_property
+        if not existing_row:
+            cur.execute("INSERT INTO tbl_property (user_id) VALUES (%s)", (id,))
+        
+        conn.commit()
+
+        flash('User approval successful.', 'success')
+    except Exception as e:
+        conn.rollback()
+        flash(f'Error approving user: {str(e)}', 'error')
+    finally:
+        cur.close()
+
+    return redirect(url_for("admin_members_info"))
+
+@app.route("/admin/decline/<int:id>", methods=["POST"])
+def decline(id):
+    try:
+        cur = conn.cursor()
+
+        cur.execute("DELETE FROM tbl_userinfo WHERE user_id = %s", (id,))
+        cur.execute("DELETE FROM tbl_useracc WHERE user_id = %s", (id,))
+        
+        conn.commit()
+
+        flash('User decline successful.', 'success')
+    except Exception as e:
+        conn.rollback()
+        flash(f'Error declining user: {str(e)}', 'error')
+    finally:
+        cur.close()
+
+    return redirect(url_for("admin_members_info"))
+
+@app.route("/admin/edit_info/<int:id>", methods=["POST", "GET"])
+def admin_edit_info(id):
+    info = conn.cursor()
+    info.execute(
+        """
+    SELECT * 
+    FROM tbl_userinfo 
+    JOIN tbl_property
+    ON tbl_userinfo.user_id = %s AND tbl_property.user_id = %s
+    LIMIT 1""",
+        (id, id),
+    )
+
+    info = info.fetchone()
+
+    return adminredirect("/admin/edit_info.html", info=info)
+
+
+@app.route("/admin/delete_info/<int:id>", methods=["POST", "GET"])
+def delete_info(id):
+    delete = conn.cursor()
+    try:
+        delete.execute(
+            """
+            UPDATE
+                `tbl_useracc`
+            SET
+                `is_deleted` = 'yes'
+            WHERE
+                `tbl_useracc`.`user_id` = %s;
+            """,
+            (id,),
+        )
+        delete.commit()
+        flash("Account deleted successfully!", "success")
+    except Exception as e:
+        flash(f"Error deleting account: {str(e)}", "error")
+
+    return redirect(url_for("admin_members_info"))
+
+@app.route("/admin/update_info/<int:id>", methods=["POST", "GET"])
+def update_info(id):
+    given_name = request.form.get("given_name")
+    middle_name = request.form.get("middle_name")
+    last_name = request.form.get("last_name")
+    gender = request.form.get("gender")
+    id_no = request.form.get("id_no")
+    blk_no = request.form.get("blk_no")
+    lot_no = request.form.get("lot_no")
+    homelot_area = request.form.get("homelot_area")
+    open_space = request.form.get("open_space")
+    sharein_loan = request.form.get("sharein_loan")
+    principal_interest = request.form.get("principal_interest")
+    MRI = request.form.get("MRI")
+    total = request.form.get("total")
+
+    update = conn.cursor()
+
+    try:
+        update.execute(
+            """
+                UPDATE tbl_userinfo
+                SET given_name = %s,
+                    middle_name = %s,
+                    last_name = %s,
+                    gender = %s
+                WHERE user_id = %s
+                """,
+            (
+                given_name,
+                middle_name,
+                last_name,
+                gender,
+                id,
+            ),
+        )
+        update.execute(
+            """
+            UPDATE tbl_property
+            SET id_no = %s,
+                blk_no = %s,
+                lot_no = %s,
+                homelot_area = %s,
+                open_space = %s,
+                sharein_loan = %s,
+                principal_interest = %s,
+                MRI = %s,
+                total = %s
+            WHERE user_id = %s
+            """,
+            (
+                id_no,
+                blk_no,
+                lot_no,
+                homelot_area,
+                open_space,
+                sharein_loan,
+                principal_interest,
+                MRI,
+                total,
+                id,
+            ),
+        )
+        conn.commit()
+        update.close()
+        flash("Account updated successfully!", "success")
+    except Exception as e:
+        flash(f"Error updating account: {str(e)}", "error")
+    return redirect(url_for("admin_members_info"))
+
+
 @app.route("/admin/payment_history", methods=["POST", "GET"])
 def admin_payment_history():
     history = conn.cursor()
@@ -360,6 +517,11 @@ def admin_payment_history():
     )
     history = history.fetchall()
     return adminredirect("/admin/payment_history.html", history=history)
+
+
+@app.route("/member/payment_history", methods=["POST", "GET"])
+def member_payment_history():
+    return memberredirect("members/payment_history.html")
 
 
 @app.route("/memebers/home")
@@ -396,6 +558,7 @@ def facelogin():
             )
             bill_face_encoding = face_recognition.face_encodings(image_of_bill)[0]
         except:
+            # face is not yet registered
             return render_template("face_login.html", message=5)
 
         unknown_image = face_recognition.load_image_file(
@@ -404,6 +567,7 @@ def facelogin():
         try:
             unknown_face_encoding = face_recognition.face_encodings(unknown_image)[0]
         except:
+            # face is not clear
             return render_template("face_login.html", message=2)
 
         results = face_recognition.compare_faces(
@@ -411,22 +575,54 @@ def facelogin():
         )
 
         if results[0]:
-            cursor.execute("SELECT * FROM tbl_useracc WHERE username = %s", ("admin",))
-            username_admin = cursor.fetchone()
-            if username_admin is not None:
-                session["user_id"] = username_admin[0]
-                return redirect("/")
+
+            cursor.execute("SELECT * FROM tbl_useracc WHERE username = %s", (username,))
+            user = cursor.fetchone()
+            if user is not None:
+
+                userid = user[0]
+
+                cursor.execute(
+                    "SELECT * FROM tbl_useracc, tbl_userinfo WHERE tbl_useracc.user_id = %s AND tbl_useracc.user_id = tbl_userinfo.user_id",
+                    (userid,),
+                )
+                user = cursor.fetchone()
+                # is user deleted ?
+                if user[5] == "no":
+                    # is user verified ?
+                    if user[6] == "yes":
+                        # Check if user is admin
+                        if user[4] == "yes":
+                            session["is_admin"] = "yes"
+                            session["fullname"] = str(user[9]) + " " + str(user[11])
+                            session["user_id"] = user[0]
+                            session["user_type"] = "ADMIN"
+                            return redirect(url_for("dashboard"))
+                        else:
+                            session["is_admin"] = "no"
+                            session["fullname"] = str(user[9]) + " " + str(user[11])
+                            session["user_id"] = user[0]
+                            session["user_type"] = "USER"
+                            return redirect(url_for("members_home"))
+                    else:
+                        return userchecker("face_login.html", messager=4)
+                else:
+                    return userchecker("face_login.html", messager=5)
+
             else:
-                return render_template(
+                return userchecker(
                     "face_login.html", message=4
-                )  # User 'admin' not found
+                )  # username if not found in database
         else:
-            return render_template(
-                "face_login.html", message=3
-            )  # Face recognition failed
+            return userchecker("face_login.html", message=3)  # Face recognition failed
 
     else:
-        return render_template("face_login.html")
+        return userchecker("face_login.html")
+
+
+@app.route("/test", methods=["GET", "POST"])
+def test():
+    return render_template("test.html")
 
 
 @app.route("/faceregister", methods=["GET", "POST"])

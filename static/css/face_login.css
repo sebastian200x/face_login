@@ -50,6 +50,9 @@
     display: block;
     margin: 20px auto;
 }
+#canvas{
+    display: none;
+}
 
 #username {
     color: black;
