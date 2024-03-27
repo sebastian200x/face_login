@@ -521,8 +521,47 @@ def admin_payment_history():
 
 @app.route("/admin/payment_arrangement", methods=["POST", "GET"])
 def admin_payment_arrangement():
-    
-    return adminredirect("/admin/payment_arrangement.html")
+    new = conn.cursor()
+    new.execute(
+        """
+        SELECT
+            tbl_property.*,
+            tbl_userinfo.*
+        FROM
+            tbl_property
+        LEFT JOIN tbl_userinfo ON tbl_property.user_id = tbl_userinfo.user_id
+        LEFT JOIN tbl_useracc ON tbl_property.user_id = tbl_useracc.user_id
+        WHERE
+            tbl_property.user_id NOT IN(
+            SELECT
+                user_id
+            FROM
+                tbl_transaction
+        ) AND tbl_property.total IS NOT NULL AND tbl_useracc.is_admin = 'no' AND tbl_useracc.is_deleted = 'no'  
+        """
+    )
+    new = new.fetchall()
+
+    return adminredirect("admin/payment_arrangement.html", new=new)
+
+
+@app.route("/admin/payment_arrange/<int:id>", methods=["POST", "GET"])
+def admin_payment_remind(id):
+    reminder = conn.cursor()
+    reminder.execute(
+        """
+    SELECT tbl_property.total, tbl_userinfo.*
+    FROM tbl_property
+    JOIN tbl_userinfo ON tbl_userinfo.user_id = %s AND tbl_property.user_id = %s
+    LIMIT 1;
+        """,
+        (
+            id,
+            id,
+        ),
+    )
+    reminder_data = reminder.fetchone()
+    return adminredirect("admin/payment_arrange.html", reminder=reminder_data)
 
 @app.route("/member/payment_history", methods=["POST", "GET"])
 def member_payment_history():

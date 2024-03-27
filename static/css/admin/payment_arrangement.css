@@ -11,13 +11,6 @@ h2 {
     padding: 1%;
 }
 
-.scrollable {
-    max-height: 10dvh;
-    /* Set the maximum height for the scrollable area */
-    overflow-y: scroll;
-    /* Enable vertical scrolling */
-}
-
 .table {
     width: 100%;
     border-collapse: collapse;
