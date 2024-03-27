@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Reminder</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/payment_arrangement.css') }}">
+    {% include 'navbar.html' %}
+</head>
+
+<body>
+
+    <h1>PAYMENT REMINDER</h1>
+    <br>
+    <br>
+    <div class="scrollable">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Amount</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for newacc in new %}
+                <tr>
+                    <td>{{newacc[15]}}, {{newacc[13]}} {{newacc[14]}}</td>
+                    <td>{{newacc[10]}}</td>
+                    <td>
+                        <a class="button remind" href="/admin/payment_remind/{{newacc[1]}}">Remind</a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="3">No account to manage</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+
+</html>

@@ -519,6 +519,11 @@ def admin_payment_history():
     return adminredirect("/admin/payment_history.html", history=history)
 
 
+@app.route("/admin/payment_arrangement", methods=["POST", "GET"])
+def admin_payment_arrangement():
+    
+    return adminredirect("/admin/payment_arrangement.html")
+
 @app.route("/member/payment_history", methods=["POST", "GET"])
 def member_payment_history():
     return memberredirect("members/payment_history.html")
