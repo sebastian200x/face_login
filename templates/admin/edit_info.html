@@ -20,14 +20,15 @@
                     <input type="text" id="given_name" name="given_name" required
                         value="{% if info[2] is none %}{% else %}{{ info[2] }}{% endif %}" autocapitalize>
                 </label>
-                <label for="last_name">Last Name
-                    <input type="text" id="last_name" name="last_name" required
-                        value="{% if info[3] is none %}{% else %}{{ info[3] }}{% endif %}">
-                </label>
                 <label for="middle_name">Middle Name
                     <input type="text" id="middle_name" name="middle_name" required
+                        value="{% if info[3] is none %}{% else %}{{ info[3] }}{% endif %}">
+                </label>
+                <label for="last_name">Last Name
+                    <input type="text" id="last_name" name="last_name" required
                         value="{% if info[4] is none %}{% else %}{{ info[4] }}{% endif %}">
                 </label>
+
                 <label for="gender">Gender
                     <select class="select" name="gender" id="gender" required>
                         {% if info[5] %}
@@ -100,7 +101,7 @@
 
                 <input class="close button" type="submit" value="&#xf00d;  Close" formaction="/admin/members_info">
             </div>
-        </main> 
+        </main>
     </form>
     {% else %}
     <script>

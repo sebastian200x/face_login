@@ -10,6 +10,17 @@
 </head>
 
 <body>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+            {% if category == 'info' %}
+                <script>
+                    alert("{{ message }}");
+                </script>
+            {% endif %}
+        {% endfor %}
+    {% endwith %}
+
+
     {% if messager == 'success' %}
     <script>
         alert('Registration Successful, please wait for admin to approve your account');

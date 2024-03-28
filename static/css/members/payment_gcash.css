@@ -1,0 +1,134 @@
+.payment-form {
+    background-color: #6fb9b9;
+    border-radius: 5px;
+    width: 50%;
+    margin: 0 auto;
+    border: 1px solid black;
+}
+
+.pay-detail {
+    width: 40%;
+    padding: 10px 20px;
+    border: solid 1px black;
+    border-radius: 10px;
+    margin: 0 auto;
+}
+
+
+/* all label design */
+label {
+    background-color: white;
+    border-radius: 10px;
+    padding: 10px 20px;
+    display: block;
+    font-weight: bold;
+    margin-left: 20px;
+}
+
+label i {
+    margin-right: 20px;
+}
+
+label:focus-within {
+    outline: 2px solid black;
+}
+
+input[type="radio"] {
+    float: right;
+}
+
+
+
+.pay {
+    display: block;
+    margin: 25px auto;
+    padding: 10px 30px;
+    border-radius: 5px;
+}
+
+.pay:hover {
+    border: 1px solid black;
+
+}
+
+h1 {
+    padding: 20px;
+}
+
+
+.payment-details {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    width: 100%;
+    padding: 10px 20px;
+}
+
+.payment-details .rows-left {
+    width: 25%;
+}
+
+.payment-details .rows {
+    width: 75%;
+}
+
+.det-title {
+    margin-left: 20px;
+    margin-top: 30px;
+}
+
+.payment-details h3 {
+    padding-bottom: 20px;
+}
+
+.det {
+    padding-left: 30px;
+}
+
+
+input[type="file"],
+input[type="text"] {
+    padding: 10px 20px;
+    border-radius: 10px;
+    width: 100%;
+}
+
+.file-input-container {
+    position: relative;
+    width: 200px;
+    height: 40px;
+    overflow: hidden;
+    background-color: #f0f0f0;
+    border-radius: 5px;
+    border: 2px solid #ccc;
+    display: inline-block;
+}
+
+.file-input {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.file-input-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    color: #333;
+}
+
+
+@media screen and (max-width: 650px) {
+
+    .payment-form {
+        width: 75%;
+    }
+
+}

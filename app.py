@@ -31,24 +31,23 @@ from helpers import apology, login_required
 
 # Configure application
 app = Flask(__name__)
+app.secret_key = "capstone"
 
 # Configure session to use filesystem (instead of signed cookies)
-app.config["SESSION_FILE_DIR"] = mkdtemp()
-app.config["SESSION_PERMANENT"] = False
-app.config["SESSION_TYPE"] = "filesystem"
-Session(app)
+# app.config["SESSION_FILE_DIR"] = mkdtemp()
+# app.config["SESSION_PERMANENT"] = False
+# app.config["SESSION_TYPE"] = "filesystem"
+# Session(app)
 
 # Configure MySQL database connection
-try:
-    conn = mysql.connector.connect(
-        host="localhost",
-        database="dbhofin",
-        user="root",
-        password="",
-    )
-    cursor = conn.cursor()
-except Error as e:
-    print(e)
+conn = mysql.connector.connect(
+    host="localhost",
+    database="dbhofin",
+    user="root",
+    password="",
+)
+
+cursor = conn.cursor()
 
 # Ensure templates are auto-reloaded
 app.config["TEMPLATES_AUTO_RELOAD"] = True
@@ -73,6 +72,17 @@ def logincheck(template, **args):
 
 # session checker if logged in it will redirect to respective homepage
 def userchecker(dir, **args):
+    check_delete = conn.cursor()
+    check_delete.execute(
+        "SELECT * FROM tbl_useracc WHERE user_id=%s AND is_deleted='yes'",
+        (session.get("user_id"),),
+    )
+    result = check_delete.fetchall()
+
+    if len(result) > 0:
+        session.clear()
+        return redirect(url_for("home"))
+
     is_admin = session.get("is_admin")
     if is_admin == "yes":
         return redirect(url_for("dashboard"))
@@ -94,7 +104,20 @@ def adminredirect(dir, **args):
 
 
 def memberredirect(dir, **args):
+    check_delete = conn.cursor()
+    check_delete.execute(
+        "SELECT * FROM tbl_useracc WHERE user_id=%s AND is_deleted='yes'",
+        (session.get("user_id"),),
+    )
+    result = check_delete.fetchall()
+
+    if len(result) > 0:
+        session.clear()
+        flash("Your account has been deleted. Please login again.", "info")
+        return redirect(url_for("home"))
+
     is_admin = session.get("is_admin")
+
     if is_admin is not None:
         if is_admin == "yes":
             return redirect(url_for("dashboard"))
@@ -317,6 +340,7 @@ def members_account():
 
 @app.route("/admin/dashboard", methods=["GET", "POST"])
 def dashboard():
+
     cursor.execute(
         "SELECT COUNT(*) FROM tbl_useracc WHERE is_admin = 'no' AND is_deleted = 'no' AND is_verified = 'yes'"
     )
@@ -325,11 +349,51 @@ def dashboard():
     cursor.execute("SELECT COUNT(*) FROM tbl_useracc WHERE is_verified = 'no'")
     to_verify = cursor.fetchone()[0]
 
+    if not to_verify:
+        to_verify = 0
+
     cursor.execute("SELECT COUNT(*) FROM tbl_useracc WHERE is_deleted = 'yes'")
     deleted = cursor.fetchone()[0]
 
-    cursor.execute("SELECT COUNT(*) FROM tbl_useracc WHERE is_admin = 'no'")
+    if not deleted:
+        deleted = 0
+
+    cursor.execute("SELECT COUNT(*) FROM tbl_transaction WHERE is_verified = 'no'")
     transac_to_verify = cursor.fetchone()[0]
+
+    if not transac_to_verify:
+        transac_to_verify = 0
+
+    cursor.execute(
+        "SELECT COUNT(*) FROM tbl_transaction WHERE transc_type = 'arrangement'"
+    )
+    unpaid_members = cursor.fetchone()[0]
+
+    if not unpaid_members:
+        total_earnings = 0
+
+    cursor.execute(
+        """
+        SELECT 
+            SUM(amount) AS total_amount
+        FROM 
+            tbl_transaction
+        WHERE 
+            is_verified = 'yes'
+        AND 
+            (transc_type = 'cash' OR transc_type = 'gcash')
+        AND
+            amount IS NOT NULL
+        AND 
+            date IS NOT NULL
+        ;
+        """
+    )
+    total_earnings = cursor.fetchone()[0]
+    if total_earnings:
+        total_earnings = "{:,}".format(total_earnings)
+    else:
+        total_earnings = 0
 
     return adminredirect(
         "admin/dashboard.html",
@@ -337,14 +401,13 @@ def dashboard():
         to_verify=to_verify,
         deleted=deleted,
         transac_to_verify=transac_to_verify,
+        unpaid_members=unpaid_members,
+        total_earnings=total_earnings,
     )
 
 
 @app.route("/admin/members_info", methods=["POST", "GET"])
 def admin_members_info():
-    # inc.execute(
-    #     "SELECT * FROM tbl_property, tbl_useracc, tbl_userinfo WHERE tbl_property.blk_no IS NULL AND tbl_property.lot_no IS NULL AND tbl_property.homelot_area IS NULL AND tbl_property.open_space IS NULL AND tbl_property.sharein_loan IS NULL AND tbl_property.principal_interest IS NULL AND tbl_property.MRI IS NULL AND tbl_property.total IS NULL AND tbl_useracc.is_admin = 'no' AND tbl_useracc.is_deleted = 'no';"
-    # )
 
     unv = conn.cursor()
     unv.execute(
@@ -436,7 +499,6 @@ def approve(id):
         flash(f"Error approving user: {str(e)}", "error")
     finally:
         cur.close()
-
     return redirect(url_for("admin_members_info"))
 
 
@@ -465,8 +527,8 @@ def admin_edit_info(id):
     info = conn.cursor()
     info.execute(
         """
-    SELECT * 
-    FROM tbl_userinfo 
+    SELECT *
+    FROM tbl_userinfo
     JOIN tbl_property
     ON tbl_userinfo.user_id = %s AND tbl_property.user_id = %s
     LIMIT 1""",
@@ -480,25 +542,56 @@ def admin_edit_info(id):
 
 @app.route("/admin/delete_info/<int:id>", methods=["POST", "GET"])
 def delete_info(id):
-    delete = conn.cursor()
     try:
+        delete = conn.cursor()
         delete.execute(
             """
             UPDATE
-                `tbl_useracc`
+                tbl_useracc
             SET
-                `is_deleted` = 'yes'
+                is_deleted = 'yes'
             WHERE
-                `tbl_useracc`.`user_id` = %s;
+                user_id = %s;
             """,
             (id,),
         )
-        delete.commit()
+        conn.commit()
         flash("Account deleted successfully!", "success")
     except Exception as e:
         flash(f"Error deleting account: {str(e)}", "error")
+    finally:
+        delete.close()
 
     return redirect(url_for("admin_members_info"))
+
+
+# @app.route("/admin/accept/<int:id>", methods=["POST"])
+# def approve(id):
+#     try:
+#         cur = conn.cursor()
+
+#         # Update tbl_useracc
+#         cur.execute(
+#             "UPDATE tbl_useracc SET is_verified = 'yes' WHERE user_id = %s", (id,)
+#         )
+
+#         # Check if row exists in tbl_property using SELECT query
+#         cur.execute("SELECT * FROM tbl_property WHERE user_id = %s", (id,))
+#         existing_row = cur.fetchone()
+
+#         # If no row exists, INSERT into tbl_property
+#         if not existing_row:
+#             cur.execute("INSERT INTO tbl_property (user_id) VALUES (%s)", (id,))
+
+#         conn.commit()
+
+#         flash("User approval successful.", "success")
+#     except Exception as e:
+#         conn.rollback()
+#         flash(f"Error approving user: {str(e)}", "error")
+#     finally:
+#         cur.close()
+#     return redirect(url_for("admin_members_info"))
 
 
 @app.route("/admin/update_info/<int:id>", methods=["POST", "GET"])
@@ -662,6 +755,8 @@ def admin_payment_arranged(id):
 
 @app.route("/members/home")
 def members_home():
+    if session.get("payment_id"):
+        session.pop("payment_id")
     id = session.get("user_id")
 
     unpaid_cursor = conn.cursor()
@@ -709,12 +804,13 @@ def payment():
     arranger.execute(
         """
         SELECT
-            *,
-            DATE_FORMAT(due_date, '%Y-%m-%d') AS readable_due_date
+            *
         FROM
             tbl_transaction
         WHERE
-            amount IS NULL AND DATE IS NULL AND is_verified = 'yes' AND transc_type = 'arrangement' AND user_id = %s;
+            amount IS NULL AND DATE IS NULL AND is_verified = 'yes' AND transc_type = 'arrangement' AND user_id = %s
+        ORDER BY 
+            due_date DESC;
         """,
         (id,),
     )
@@ -727,8 +823,25 @@ def payment():
 def members_pay(payment_id):
     if session.get("payment_id"):
         session.pop("payment_id")
-    session["payment_id"] = payment_id
-    return memberredirect("members/pay.html")
+    cursor = conn.cursor()
+    cursor.execute(
+        """
+        SELECT 
+            transac_id 
+        FROM 
+            tbl_transaction
+        WHERE 
+            transac_id = %s
+        """,
+        (payment_id,),
+    )
+    result = cursor.fetchone()
+    conn.commit()
+    if not result:
+        return redirect(url_for("payment"))
+    else:
+        session["payment_id"] = payment_id
+        return memberredirect("members/pay.html")
 
 
 @app.route("/choice", methods=["POST"])
@@ -798,7 +911,8 @@ def members_payment_gcash():
 
 @app.route("/members/payment_history", methods=["POST", "GET"])
 def member_payment_history():
-
+    if session.get("payment_id"):
+        session.pop("payment_id")
     return memberredirect("members/payment_history.html")
 
 

@@ -2,7 +2,8 @@
     width: 75%;
     background-color: #6FB9B9;
     padding: 10px 30px;
-    margin: 0 auto; /* Center the div horizontally */
+    margin: 0 auto;
+    border-radius: 2%;
 }
 
 
@@ -21,13 +22,13 @@ select {
     border-radius: 8px;
 }
 
-input:focus,
-select:focus {
+input[type=password]:active,
+input[type=email]:active {
     outline: 1px solid black;
 }
 
-input:hover,
-select:hover {
+input[type=password]:hover,
+input[type=email]:hover {
     outline: 1px solid black;
 }
 
@@ -49,6 +50,15 @@ label {
     font-size: 16px;
 }
 
+.property-info {
+    display: grid;
+    grid-template-columns: auto auto auto auto;
+    grid-template-rows: auto auto;
+}
+
+.property-info-col {
+    padding: 0 10px 0 0;
+}
 
 .account-info {
     display: grid;
@@ -59,6 +69,8 @@ label {
 .account-info-col {
     padding: 0 10px 0 0;
 }
+
+
 
 
 .butons {

@@ -21,7 +21,6 @@ table thead {
 }
 
 .pay {
-    width: 60px;
     border-radius: 5px;
     cursor: pointer;
     border: 1px solid black;

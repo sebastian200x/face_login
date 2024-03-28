@@ -35,6 +35,64 @@
             {% endif %}
         </center> -->
         <form action="/" method="POST">
+
+
+            <div class="personal-information">
+                <h3 class="info">Personal Information</h3>
+                <br>
+                <div class="personal-info">
+                    <div class="personal-info-col"><label for="given-name">Given Name</label></div>
+                    <div class="personal-info-col"><label for="middle-name">Middle Name</label></div>
+                    <div class="personal-info-col"><label for="last-name">Last Name</label></div>
+                    <div class="personal-info-col"><input type="text" name="given_name" autofocus disabled
+                            placeholder="First Name" value="{{ user[9] }}"></div>
+                    <div class="personal-info-col"><input type="text" name="middle_name" disabled
+                            placeholder="Middle Name" value="{{ user[10] }}"></div>
+                    <div class="personal-info-col-last"><input type="text" name="last_name" disabled
+                            placeholder="Last Name" value="{{ user[11] }}"></div>
+                </div>
+                <label for="gender">Gender
+                    <select name="gender" disabled>
+                        <option selected>{{ user[12] }}</option>
+                    </select>
+                </label>
+            </div>
+
+            <div class="property-information">
+                <h3 class="info">Property Information</h3>
+                <br>
+                <div class="property-info">
+                    <div class="property-info-col"><label for="given-name">Block No.:</label></div>
+                    <div class="property-info-col"><label for="middle-name">Lot No.:</label></div>
+                    <div class="property-info-col"><label for="last-name">Home Lot Area:</label></div>
+                    <div class="property-info-col"><label for="last-name">Open Space:</label></div>
+
+                    <div class="property-info-col"><input type="number" disabled placeholder="Block No"
+                            value="{{ user[16] }}"></div>
+                    <div class="property-info-col"><input type="number" disabled placeholder="Lot No"
+                            value="{{ user[17] }}"></div>
+                    <div class="property-info-col"><input type="number" disabled placeholder="Home Lot Area"
+                            value="{{ user[18] }}"></div>
+                    <div class="property-info-col"><input type="number" disabled placeholder="Open Space"
+                            value="{{ user[19] }}"></div>
+
+                    <div class="property-info-col"><label for="given-name">Share in loan:</label></div>
+                    <div class="property-info-col"><label for="middle-name">Principal Interest:</label></div>
+                    <div class="property-info-col"><label for="last-name">MRI:</label></div>
+                    <div class="property-info-col"><label for="last-name">Monthly Payment:</label></div>
+
+                    <div class="property-info-col"><input type="number" disabled placeholder="Share in loan"
+                            value="{{ user[20] }}"></div>
+                    <div class="property-info-col"><input type="number" disabled placeholder="Principal Interest"
+                            value="{{ user[21] }}"></div>
+                    <div class="property-info-col"><input type="number" disabled placeholder="MRI"
+                            value="{{ user[22] }}">
+                    </div>
+                    <div class="property-info-col"><input type="number" disabled placeholder="Monthly Payment"
+                            value="{{ user[23] }}"></div>
+
+                </div>
+            </div>
             <div class="account-information">
                 <br>
                 <h3 class="info">Account Information</h3>
@@ -48,58 +106,18 @@
                     <div class="account-info-col"><label for="confirm-password">Confirm Password</label></div>
                     <div class="account-info-col"> <input type="password" name="password" required
                             placeholder="Password"
-                            class="{% if (messager == 1 ) or (messager == 3 ) %}wrong{% endif %}"></div>
+                            class="{% if (messager == 1 ) or (messager == 3 ) or (messager == 4 ) %}wrong{% endif %}">
+                    </div>
                     <div class="account-info-col-last"><input type="password" name="confirm" required
                             placeholder="Confirm Password"
                             class="{% if (messager == 2 ) or (messager == 3 ) %}wrong{% endif %}"></div>
                 </div>
 
                 <label for="email">Email
-                    <input type="email" name="email" placeholder="Email" required>
+                    <input type="email" name="email" placeholder="Email" value="{{ user[3] }}" required>
                 </label>
 
             </div>
-            <div class="personal-information">
-                <h3 class="info">Personal Information</h3>
-                <br>
-                <div class="personal-info">
-                    <div class="personal-info-col"><label for="given-name">Given Name</label></div>
-                    <div class="personal-info-col"><label for="middle-name">Middle Name</label></div>
-                    <div class="personal-info-col"><label for="last-name">Last Name</label></div>
-                    <div class="personal-info-col"><input type="text" name="given_name" autofocus disabled
-                            placeholder="First Name"></div>
-                    <div class="personal-info-col"><input type="text" name="middle_name" disabled
-                            placeholder="Middle Name"></div>
-                    <div class="personal-info-col-last"><input type="text" name="last_name" disabled
-                            placeholder="Last Name"></div>
-                </div>
-                <label for="gender">Gender
-                    <select name="gender" disabled>
-                        <option value="" selected></option>
-                    </select>
-                </label>
-            </div>
-            <div class="personal-information">
-                <h3 class="info">Personal Information</h3>
-                <br>
-                <div class="personal-info">
-                    <div class="personal-info-col"><label for="given-name">Given Name</label></div>
-                    <div class="personal-info-col"><label for="middle-name">Middle Name</label></div>
-                    <div class="personal-info-col"><label for="last-name">Last Name</label></div>
-                    <div class="personal-info-col"><input type="text" name="given_name" autofocus disabled
-                            placeholder="First Name"></div>
-                    <div class="personal-info-col"><input type="text" name="middle_name" disabled
-                            placeholder="Middle Name"></div>
-                    <div class="personal-info-col-last"><input type="text" name="last_name" disabled
-                            placeholder="Last Name"></div>
-                </div>
-                <label for="gender">Gender
-                    <select name="gender" disabled>
-                        <option value="" selected></option>
-                    </select>
-                </label>
-            </div>
-
             <button class="button" id="hoverinbtn" type="submit">Update Account</button>
             <a href="/login" class="login">Back</a>
         </form>
