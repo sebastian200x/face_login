@@ -1,0 +1,8 @@
+{
+    "name": "app",
+    "env": "production",
+    "port": "$PORT",
+    "web": "gunicorn app:app",
+    "buildCommand": "python3 -m pip install -r requirements.txt",
+    "runCommand": "gunicorn app:app"
+}
