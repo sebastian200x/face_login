@@ -11,18 +11,19 @@
 </head>
 
 <body style="padding-top: 100px;">
-    <h1 class="center">Account Info</h1>
+
+    <h1 class="center" style="padding-top: 20px;">Member Information</h1>
 
     <div class="container">
         <div class="card">
             <h2>Pending Bills</h2>
-            <p>Total Unpaid Bills: {{to_verify}}</p>
-            <a href="/admin/members_info" class="button">Pay</a>
+            <p>Total Unpaid Bills: {{unpaid_count}}</p>
+            <a href="/members/payment" class="button">Pay</a>
         </div>
         <div class="card">
             <h2>Verified Payments</h2>
-            <p>Total transactions: {{count_user}}</p>
-            <a href="/admin/members_info" class="button">View History</a>
+            <p>Total transactions: {{paid_count}}</p>
+            <a href="/members/payment_history" class="button">View History</a>
         </div>
     </div>
 

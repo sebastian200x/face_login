@@ -58,16 +58,11 @@ td:last-child {
     box-sizing: border-box;
 }
 
-/* Style for no results message */
-.no-results {
-    font-style: italic;
-    color: red;
-}
 
 .half {
     border: 1px solid black;
     margin-top: 30px;
-    
+
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;

@@ -258,6 +258,63 @@ def register():
     return render_template("register.html", username=username)
 
 
+@app.route("/account")
+def account():
+    user_type = session.get("user_type")
+    if user_type == "ADMIN":
+        return redirect(url_for("admin_account"))
+    elif user_type == "USER":
+        return redirect(url_for("members_account"))
+    else:
+        return redirect(url_for("login"))
+
+
+@app.route("/admin/account")
+def admin_account():
+    id = session.get("user_id")
+    cursor = conn.cursor()
+    cursor.execute(
+        """
+        SELECT
+            *
+        FROM
+            tbl_useracc,
+            tbl_userinfo
+        WHERE
+            tbl_useracc.user_id = %s AND tbl_userinfo.user_id = %s
+        """,
+        (
+            id,
+            id,
+        ),
+    )
+    admin = cursor.fetchone()
+
+    return adminredirect("/admin/account.html", admin=admin)
+
+
+@app.route("/members/account")
+def members_account():
+    id = session.get("user_id")
+    cursor = conn.cursor()
+    cursor.execute(
+        """
+        SELECT
+            *
+        FROM
+            tbl_useracc,
+            tbl_userinfo,
+            tbl_property
+        WHERE
+            tbl_useracc.user_id = %s AND tbl_userinfo.user_id = %s AND tbl_property.user_id = %s
+        """,
+        (id, id, id),
+    )
+    user = cursor.fetchone()
+
+    return memberredirect("/members/account.html", user=user)
+
+
 @app.route("/admin/dashboard", methods=["GET", "POST"])
 def dashboard():
     cursor.execute(
@@ -591,9 +648,9 @@ def admin_payment_arranged(id):
         update = conn.cursor()
         update.execute(
             """
-            INSERT INTO `tbl_transaction` (`user_id`, `balance_debt`, `transc_type`, `date`, `due_date`, `is_verified`) 
+            INSERT INTO `tbl_transaction` (`user_id`, `balance_debt`, `transc_type`,  `due_date`, `is_verified`) 
             VALUES 
-            (%s, %s, 'arrangement', NOW(), %s, 'yes');
+            (%s, %s, 'arrangement', %s, 'yes');
             """,
             (id, amount, due_date),
         )
@@ -603,15 +660,146 @@ def admin_payment_arranged(id):
     return render_template("payment_arranged.html")
 
 
-@app.route("/member/payment_history", methods=["POST", "GET"])
-def member_payment_history():
-    return memberredirect("members/payment_history.html")
-
-
-@app.route("/memebers/home")
+@app.route("/members/home")
 def members_home():
+    id = session.get("user_id")
 
-    return memberredirect("members/home.html")
+    unpaid_cursor = conn.cursor()
+    unpaid_cursor.execute(
+        """
+        SELECT
+            *
+        FROM
+            tbl_transaction
+        WHERE
+            amount IS NULL AND DATE IS NULL AND is_verified = 'yes' AND transc_type = 'arrangement' AND user_id = %s;
+        """,
+        (id,),
+    )
+    unpaid_cursor.fetchall()
+    unpaid_count = unpaid_cursor.rowcount
+
+    paid_cursor = conn.cursor()
+    paid_cursor.execute(
+        """
+        SELECT
+            *
+        FROM
+            tbl_transaction
+        WHERE
+            amount IS NOT NULL AND DATE IS NOT NULL AND is_verified = 'yes' AND transc_type = 'gcash' OR transc_type = 'cash' AND user_id = %s;
+        """,
+        (id,),
+    )
+    paid_cursor.fetchall()
+    paid_count = paid_cursor.rowcount
+
+    return memberredirect(
+        "members/home.html", paid_count=paid_count, unpaid_count=unpaid_count
+    )
+
+
+@app.route("/members/payment")
+def payment():
+    if session.get("payment_id"):
+        session.pop("payment_id")
+
+    id = session.get("user_id")
+    arranger = conn.cursor()
+    arranger.execute(
+        """
+        SELECT
+            *,
+            DATE_FORMAT(due_date, '%Y-%m-%d') AS readable_due_date
+        FROM
+            tbl_transaction
+        WHERE
+            amount IS NULL AND DATE IS NULL AND is_verified = 'yes' AND transc_type = 'arrangement' AND user_id = %s;
+        """,
+        (id,),
+    )
+    arranger_data = arranger.fetchall()
+
+    return memberredirect("members/payment.html", arranger=arranger_data)
+
+
+@app.route("/members/pay/<int:payment_id>", methods=["POST", "GET"])
+def members_pay(payment_id):
+    if session.get("payment_id"):
+        session.pop("payment_id")
+    session["payment_id"] = payment_id
+    return memberredirect("members/pay.html")
+
+
+@app.route("/choice", methods=["POST"])
+def choice():
+    choice = request.form["choice"]
+    if choice == "cash":
+        return redirect(url_for("members_payment_cash"))
+    else:
+        return redirect(url_for("members_payment_gcash"))
+
+
+@app.route("/members/payment_cash", methods=["POST", "GET"])
+def members_payment_cash():
+    if session.get("payment_id"):
+        payment_id = session.get("payment_id")
+    else:
+        return redirect(url_for("payment"))
+
+    id = session.get("user_id")
+
+    payment = conn.cursor()
+    payment.execute(
+        """
+        SELECT
+            *
+        FROM
+            tbl_transaction
+        WHERE transac_id = %s AND user_id = %s;
+        """,
+        (
+            payment_id,
+            id,
+        ),
+    )
+    payment_data = payment.fetchall()
+
+    return memberredirect("members/payment_cash.html", cash=payment_data)
+
+
+@app.route("/members/payment_gcash", methods=["POST", "GET"])
+def members_payment_gcash():
+    if session.get("payment_id"):
+        payment_id = session.get("payment_id")
+    else:
+        return redirect(url_for("payment"))
+
+    id = session.get("user_id")
+
+    payment = conn.cursor()
+    payment.execute(
+        """
+        SELECT
+            *
+        FROM
+            tbl_transaction
+        WHERE transac_id = %s AND user_id = %s;
+        """,
+        (
+            payment_id,
+            id,
+        ),
+    )
+    payment_data = payment.fetchall()
+
+    return memberredirect("members/payment_gcash.html", gcash=payment_data)
+
+
+@app.route("/members/payment_history", methods=["POST", "GET"])
+def member_payment_history():
+
+    return memberredirect("members/payment_history.html")
 
 
 @app.route("/facelogin", methods=["GET", "POST"])

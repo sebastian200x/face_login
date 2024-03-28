@@ -42,17 +42,12 @@
     position: fixed;
     left: 0;
     top: 0;
-    /* background: linear-gradient(to right, #1d5779, #05296b); */
     background: #6fb9b9;
     left: -300px;
     transition: left .35s;
 }
 
-.sidenav li:last-child {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
-}
+
 
 
 .sidenav-overlay {
@@ -159,18 +154,6 @@ ul {
     color: #575757
 }
 
-/* .footer {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    text-align: center;
-    text-decoration: none;
-    background: #673AB7;
-    color: #fff;
-    left: 0;
-    padding: 10px 20px;
-    z-index: -2;
-} */
 
 /* Navbar */
 .navbar {
@@ -222,6 +205,38 @@ ul {
     align-self: center;
     margin-left: auto;
     color: #fff
+}
+
+.sidenav .flex {
+    position: absolute;
+    bottom: 10px;
+}
+
+.flex-half a {
+    text-decoration: none;
+    color: #eee;
+    display: inline-block;
+    padding: 20px;
+    padding-left: 30px;
+    width: 100%;
+}
+
+.flex-half:hover,
+.flex-half:active {
+    background: rgba(0, 0, 0, .1);
+}
+
+.flex {
+    display: flex;
+    text-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 30px;
+}
+
+.flex-half {
+    width: 50%;
 }
 
 /* Full screen sidenav when in phone */

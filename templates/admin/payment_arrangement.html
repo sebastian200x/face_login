@@ -11,21 +11,21 @@
 
 <body>
 
-    <h1>PAYMENT REMINDER</h1>
+    <h1>PAYMENT ARRANGEMENT</h1>
     <br>
 
     <div class="half">
         <div class="half-half">
         </div>
         <div class="half-half">
-            <input type="text" id="searchComplete" class="search-input"
-                onkeyup="filterTable('searchComplete', 'completeTable')" placeholder="Search for names...">
+            <input type="text" id="searchArrangement" class="search-input"
+                onkeyup="filterTable('searchArrangement', 'arrangementTable')" placeholder="Search for names...">
         </div>
     </div>
     <table class="table">
         <thead>
             <tr>
-                <th class="sort-btn" onclick="sortTable(0, 'completeTable')">Name</th>
+                <th class="sort-btn" onclick="sortTable(0, 'arrangementTable')">Name</th>
                 <th>Amount</th>
                 <th>Action</th>
             </tr>
@@ -34,17 +34,17 @@
             {% if new %}
             {% for newacc in new %}
             <tr>
-                <td>{{newacc[15]}}, {{newacc[13]}} {{newacc[14]}}</td>
-                <td>{{newacc[10]}}</td>
+                <td>{{ newacc[15] }}, {{ newacc[13] }} {{ newacc[14] }}</td>
+                <td>{{ newacc[10] }}</td>
                 <td>
-                    <a class="button remind" href="/admin/payment_arrange/{{newacc[1]}}">Arrange Payment</a>
+                    <a class="button remind" href="/admin/payment_arrange/{{ newacc[1] }}">Arrange Payment</a>
                 </td>
             </tr>
+            {% endfor %}
             {% else %}
             <tr>
                 <td colspan="3">No account to manage</td>
             </tr>
-            {% endfor %}
             {% endif %}
         </tbody>
     </table>

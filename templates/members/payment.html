@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment History</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/members/payment.css') }}">
+    {% include 'navbar.html' %}
+</head>
+
+<body>
+    <div class="table">
+        <h1>Members Payment</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Ammount</th>
+                    <th>Due Date</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if arranger %}
+                {% for arrangers in arranger %}
+                <tr>
+                    <td>{{ arrangers[2] }}</td>
+                    <td>{{ arrangers[6].strftime('%B %d, %Y') }}</td>
+                    <td>
+                        <form action="/members/pay/{{arrangers[0]}}">
+                            <input type="submit" class="fa fas pay" value="&#xf0d6; Pay">
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+                {% else %}
+                <tr>
+                    <td colspan="3">No Result</td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</body>
+
+</html>
