@@ -20,7 +20,7 @@ table {
 table thead {
     font-weight: bold;
 }
-
+/* 
 .btn-view {
     width: 60px;
     border-radius: 5px;
@@ -30,13 +30,11 @@ table thead {
     padding: 10px 0;
     font-weight: bold;
 }
-
 .pop-up-edit {
     background-color: rgb(194, 193, 193);
     width: 40%;
     margin: 0 auto;
     padding: 2em;
-    /* center div */
     position: absolute;
     left: 50%;
     top: 50%;
@@ -71,7 +69,6 @@ output {
 }
 
 .pop-up-edit::backdrop {
-    /* backdrop-filter: blur(5px); */
     filter: brightness(80%);
 }
 
@@ -82,4 +79,10 @@ output {
     border: 1px solid black;
     padding: 10px;
     font-weight: bold;
-}
+} */
+
+@media (max-width: 660px) {
+    table {
+        width: 99%;
+    }
+    }

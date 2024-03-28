@@ -60,21 +60,25 @@
                 </button>
                 <video id="player" autoplay>
                 </video>
-                <br>
-                <button id="capture" onclick="capture()">
-                    Capture
-                </button>
                 <form action="/facelogin" method="post" enctype="multipart/form-data">
                     <input type="text" required="true" placeholder="Username" name="username" id="username">
                     <input type="text" id="pic" name="pic" style="display:none">
                     <button id="scan" class="scan" class="btn btn-primary">Login</button>
-                    <a href="/" class="login">Back</a>
                 </form>
+                <br>
+                <button id="capture" onclick="capture()">Capture</button>
+                <a href="/" class="login">Back</a>
             </div>
         </div>
     </div>
 </body>
 <script>
+    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+        alert("Mobile Devices are not currently supported, Please use a computer with camera");
+        window.location.href = "/login";
+        console.error('Unsupported Device:', error);
+    }
+
     const player = document.getElementById('player');
     const canvas = document.getElementById('canvas');
     const context = canvas.getContext('2d');
@@ -118,6 +122,8 @@
             console.error('No camera detected:', error);
             window.location.href = "/login";
         });
+
+
 
 </script>
 

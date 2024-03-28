@@ -11,13 +11,13 @@
 
 <body>
     {% with messages = get_flashed_messages(with_categories=true) %}
-        {% for category, message in messages %}
-            {% if category == 'info' %}
-                <script>
-                    alert("{{ message }}");
-                </script>
-            {% endif %}
-        {% endfor %}
+    {% for category, message in messages %}
+    {% if category == 'info' %}
+    <script>
+        alert("{{ message }}");
+    </script>
+    {% endif %}
+    {% endfor %}
     {% endwith %}
 
 
@@ -56,7 +56,8 @@
                     <label for="uname">Username:</label>
                     {% if messager == 1 %}
                     <input type="text" name="username" id="uname" class="wrong" pattern="^\S{3,}$"
-                        title="Username must have 3 characters and cannot have spaces" placeholder="Enter Username" required>
+                        title="Username must have 3 characters and cannot have spaces" placeholder="Enter Username"
+                        required>
                     <center>
                         <header class="inv"
                             style="color:white;box-shadow: 5px 7px 15px black;border: 2px solid red;border-radius: 50px;background-color: red;width:200px">
@@ -65,7 +66,8 @@
                     </center>
                     {% elif messager == 3 %}
                     <input type="text" name="username" id="uname" class="wrong" pattern="^\S{3,}$"
-                        title="Username must have 3 characters and cannot have spaces" placeholder="Enter Username" required>
+                        title="Username must have 3 characters and cannot have spaces" placeholder="Enter Username"
+                        required>
                     <center>
                         <header
                             style="color:white;box-shadow: 5px 7px 15px black;border: 2px solid red;border-radius: 50px;background-color: red;width:300px ">
@@ -83,7 +85,8 @@
 
                     {% if messager == 2 %}
                     <input type="password" name="password" id="psw" class="wrong" pattern="^\S{3,}$"
-                        title="Password must have 3 characters and cannot have spaces" placeholder="Enter Password" required>
+                        title="Password must have 3 characters and cannot have spaces" placeholder="Enter Password"
+                        required autocomplete="false">
                     <center>
                         <header
                             style="color:white;box-shadow: 5px 7px 15px black;border: 2px solid red;border-radius: 50px;background-color: red;width:200px">
@@ -92,11 +95,13 @@
                     </center>
                     {% elif messager == 3 %}
                     <input type="password" name="password" id="psw" class="wrong" pattern="^\S{3,}$"
-                        title="Password must have 3 characters and cannot have spaces" placeholder="Enter Password" required>
+                        title="Password must have 3 characters and cannot have spaces" placeholder="Enter Password"
+                        required autocomplete="false">
 
                     {% else %}
                     <input type="password" name="password" id="psw" pattern="^\S{3,}$"
-                        title="Password must have 3 characters and cannot have spaces" placeholder="Enter Password" required>
+                        title="Password must have 3 characters and cannot have spaces" placeholder="Enter Password"
+                        required autocomplete="false">
                     {% endif %}
                     <br><br><br>
                     <input class="button" type="submit" value="Login" name="login">

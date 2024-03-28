@@ -96,3 +96,12 @@
 .login:hover {
     background-color: #767676;
 }
+
+@media (max-width: 660px) {
+    .left{
+        display: none;
+    }
+    .right {
+        width: 100%;
+    }
+    }

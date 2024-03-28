@@ -28,3 +28,9 @@ table thead {
     padding: 10px 20px;
     font-weight: bold;
 }
+
+@media (max-width: 660px) {
+    table {
+        width: 99%;
+    }
+    }

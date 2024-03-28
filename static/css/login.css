@@ -126,3 +126,12 @@ a.face-password-link {
 a.face-password-link:hover, .button:hover {
     background-color: #767676;
 }
+
+@media (max-width: 660px) {
+    .left{
+        display: none;
+    }
+    .right {
+        width: 100%;
+    }
+    }
