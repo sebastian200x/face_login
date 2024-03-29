@@ -1,4 +1,4 @@
-.payment-form {
+.payment-forms {
     background-color: #6fb9b9;
     border-radius: 5px;
     width: 50%;
@@ -40,8 +40,6 @@ input[type="radio"] {
     float: right;
 }
 
-
-
 .pay {
     display: block;
     margin: 25px auto;
@@ -51,13 +49,11 @@ input[type="radio"] {
 
 .pay:hover {
     border: 1px solid black;
-
 }
 
 h1 {
     padding: 20px;
 }
-
 
 .payment-details {
     display: flex;
@@ -87,7 +83,6 @@ h1 {
 .det {
     padding-left: 30px;
 }
-
 
 input[type="text"] {
     padding: 10px 20px;
@@ -126,27 +121,66 @@ input[type="text"] {
     color: #333;
 }
 
+.qr {
+    height: 350px;
+    width: 350px;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+    margin: 0 auto;
+}
 
-@media screen and (max-width: 650px) {
+@media screen and (max-width: 1024px) {
+    .payment-forms {
+        width: 60%;
+    }
+}
 
-    .payment-form {
-        width: 90%;
+@media screen and (max-width: 1150px) {
+    .pay-detail {
+        width: 70%;
+    }
+}
+
+@media screen and (max-width: 980px) {
+    .payment-forms {
+        width: 75%;
     }
 
     .payment-details .rows-left {
         width: 40%;
         align-items: center;
+    }
 
+    .file-input-container {
+        width: 100%;
+    }
+
+    .qr {
+        height: 250px;
+        width: 250px;
     }
 
     .payment-details .rows {
         width: 60%;
         align-items: center;
     }
+}
 
-    .pay-detail {
-        width: 70%;
+@media screen and (max-width: 420px) {
+    .payment-details .rows-left {
+        width: 100%;
+        align-items: center;
+        text-align: center;
+        padding-top: 10px;
     }
 
+    .det {
+        padding-left: 0;
+    }
 
+    .payment-details .rows {
+        width: 100%;
+        align-items: center;
+    }
 }

@@ -123,15 +123,34 @@ a.face-password-link {
     text-align: center;
 }
 
-a.face-password-link:hover, .button:hover {
+a.face-password-link:hover,
+.button:hover {
     background-color: #767676;
 }
 
+@media (max-width: 900px) {
+    .button {
+        width: 50%;
+    }
+    a.face-password-link{
+        width: 50%;
+    }
+}
+
+
 @media (max-width: 660px) {
-    .left{
+    .left {
         display: none;
     }
+
     .right {
         width: 100%;
     }
+
+    .button {
+        width: 55%;
     }
+    a.face-password-link{
+        width: 55%;
+    }
+}

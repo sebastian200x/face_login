@@ -565,34 +565,6 @@ def delete_info(id):
     return redirect(url_for("admin_members_info"))
 
 
-# @app.route("/admin/accept/<int:id>", methods=["POST"])
-# def approve(id):
-#     try:
-#         cur = conn.cursor()
-
-#         # Update tbl_useracc
-#         cur.execute(
-#             "UPDATE tbl_useracc SET is_verified = 'yes' WHERE user_id = %s", (id,)
-#         )
-
-#         # Check if row exists in tbl_property using SELECT query
-#         cur.execute("SELECT * FROM tbl_property WHERE user_id = %s", (id,))
-#         existing_row = cur.fetchone()
-
-#         # If no row exists, INSERT into tbl_property
-#         if not existing_row:
-#             cur.execute("INSERT INTO tbl_property (user_id) VALUES (%s)", (id,))
-
-#         conn.commit()
-
-#         flash("User approval successful.", "success")
-#     except Exception as e:
-#         conn.rollback()
-#         flash(f"Error approving user: {str(e)}", "error")
-#     finally:
-#         cur.close()
-#     return redirect(url_for("admin_members_info"))
-
 
 @app.route("/admin/update_info/<int:id>", methods=["POST", "GET"])
 def update_info(id):
@@ -1055,8 +1027,9 @@ for code in default_exceptions:
     app.errorhandler(code)(errorhandler)
 
 if __name__ == "__main__":
-    app.run(debug=True, host="localhost", port=5696)
+    app.run(debug=True, host="localhost", port=6969)
 
 
 # to make it accessible to other device in the same network use this:
 # flask run --host=0.0.0.0
+# pip freeze > requirements.txt
