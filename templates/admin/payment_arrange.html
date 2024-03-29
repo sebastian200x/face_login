@@ -17,8 +17,8 @@
         <span><label for="due">Set deadline this month:</label><input type="date" id="due" name="due"
                 placeholder="Due date" required min="{{ today.strftime('%Y-%m-%d') }}"></span>
         <span class="currency-code"><label for="amount">Amount:</label>
-            ₱ <input type="number" id="amount" name="amount" placeholder="Amount" value="{{ arrange[0] }}"
-                required /></span>
+            ₱ <input type="text" id="amount" name="amount" placeholder="Amount" value="{{ arrange[0] }}" required />
+        </span>
         <input type="submit" name="arrange" class="buton remind" value="Remind">
     </form>
     {% else %}
@@ -32,4 +32,23 @@
 </html>
 
 
+<script>
+    // Function to add thousand commas to a number
+    function addThousandCommas(number) {
+        return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
 
+    // Get the input element
+    const amountInput = document.getElementById('amount');
+
+    // Add event listener for input change
+    amountInput.addEventListener('input', function (event) {
+        // Remove commas from the input value
+        let inputValue = event.target.value.replace(/,/g, '');
+        // Add commas back to the input value
+        event.target.value = addThousandCommas(inputValue);
+    });
+
+    // Format the initial value on load
+    amountInput.value = addThousandCommas(amountInput.value);
+</script>

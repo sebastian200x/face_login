@@ -18,6 +18,7 @@ from flask import (
 )
 
 import bcrypt
+import secrets
 
 from flask_session import Session
 from tempfile import mkdtemp
@@ -133,6 +134,22 @@ def generate_username(id):
     year_today = now.strftime("%Y")
     username = year_today + str(id)
     return username
+
+
+def cash_code(length=5):
+    alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+    while True:
+        code = "".join(secrets.choice(alphabet) for i in range(length))
+        if not code_exists(code):
+            break
+    return code
+
+
+def code_exists(code):
+    query = "SELECT COUNT(*) FROM tbl_transaction WHERE code = %s"
+    cursor.execute(query, (code,))
+    count = cursor.fetchone()[0]
+    return count > 0
 
 
 # List of Session
@@ -565,7 +582,6 @@ def delete_info(id):
     return redirect(url_for("admin_members_info"))
 
 
-
 @app.route("/admin/update_info/<int:id>", methods=["POST", "GET"])
 def update_info(id):
     given_name = request.form.get("given_name")
@@ -667,7 +683,7 @@ def admin_payment_arrangement():
         LEFT JOIN tbl_userinfo ON tbl_property.user_id = tbl_userinfo.user_id
         LEFT JOIN tbl_useracc ON tbl_property.user_id = tbl_useracc.user_id
         WHERE
-            tbl_property.user_id NOT IN(
+            tbl_userinfo.user_id NOT IN(
             SELECT
                 user_id
             FROM
@@ -820,6 +836,8 @@ def members_pay(payment_id):
 def choice():
     choice = request.form["choice"]
     if choice == "cash":
+        code = cash_code()
+        session["code"] = code
         return redirect(url_for("members_payment_cash"))
     else:
         return redirect(url_for("members_payment_gcash"))
@@ -827,6 +845,7 @@ def choice():
 
 @app.route("/members/payment_cash", methods=["POST", "GET"])
 def members_payment_cash():
+
     if session.get("payment_id"):
         payment_id = session.get("payment_id")
     else:
@@ -850,7 +869,42 @@ def members_payment_cash():
     )
     payment_data = payment.fetchall()
 
-    return memberredirect("members/payment_cash.html", cash=payment_data)
+    code = session.get("code")
+
+    if request.method == "POST":
+        code_confirm = request.form.get("code-confirm")
+        if code_confirm == code:
+            try:
+                cash_proceed = conn.cursor()
+                cash_proceed.execute(
+                    """
+                    UPDATE 
+                        tbl_transaction 
+                    SET 
+                        code = %s,
+                        transc_type = 'Cash',
+                        is_verified = 'no'
+                    WHERE 
+                        transac_id = %s 
+                    AND 
+                        user_id = %s;
+                    """,
+                    (
+                        code,
+                        payment_id,
+                        id,
+                    ),
+                )
+                conn.commit()
+            except Exception as e:
+                print(e)
+                return render_template("error.html", error=e)
+
+            return redirect(url_for("members_payment_history"))
+        else:
+            return memberredirect("members/payment_cash.html", message=1)
+
+    return memberredirect("members/payment_cash.html", cash=payment_data, code=code)
 
 
 @app.route("/members/payment_gcash", methods=["POST", "GET"])
@@ -882,10 +936,48 @@ def members_payment_gcash():
 
 
 @app.route("/members/payment_history", methods=["POST", "GET"])
-def member_payment_history():
+def members_payment_history():
     if session.get("payment_id"):
         session.pop("payment_id")
-    return memberredirect("members/payment_history.html")
+        
+    id = session.get("user_id")
+        
+    unverified = conn.cursor()
+    unverified.execute(
+        """
+        SELECT
+            *
+        FROM
+            tbl_transaction
+        WHERE
+            transc_type = 'gcash' OR transc_type = 'cash' AND user_id = %s AND is_verified = 'no' AND
+            (code IS NOT NULL OR proof IS NOT NULL)
+        """,
+        (
+            id,
+        ),
+    )
+    unverified = unverified.fetchall()
+    
+    verified = conn.cursor()
+    verified.execute(
+        """
+        SELECT
+            *
+        FROM
+            tbl_transaction
+        WHERE
+            transc_type = 'gcash' OR transc_type = 'cash' AND user_id = %s AND is_verified = 'yes' AND
+            (code IS NOT NULL OR proof IS NOT NULL)
+        """,
+        (
+            id,
+        ),
+    )
+    verified = verified.fetchall()
+    
+    
+    return memberredirect("members/payment_history.html", unverified=unverified, verified=verified)
 
 
 @app.route("/facelogin", methods=["GET", "POST"])

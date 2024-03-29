@@ -10,7 +10,43 @@
 </head>
 
 <body>
+    {% if message == 1 %}
+    <script>
+        alert('Incorrect code given, please try again');
+    </script>
+    {% endif %}
+    <form method="POST" action="" class="payment-form">
+        <h1 class="center">Cash Payment</h1>
+        {% if cash%}
+        {% for c in cash %}
+        <div class="pay-detail">
+            <h3 class="center">Payment Details: </h3>
+            <h3>Amount to pay: <span id="formattedAmount">{{ c[2] }}</span></h3>
+            <h3>Due date: {{c[6].strftime('%B %d, %Y')}}</h3>
+        </div>
+        {%endfor%}
+        {% endif %}
+        <h3 class="instruct">Instructions:</h3>
+        <p class="instruction">Go to admin and present this code upon giving your payment to confirm your
+            transaction:</p>
+        <h2 class="code"><strong>{{ code }}</strong></h2>
+        <p class="instruction">This can be found in transaction history page.</p>
 
+        <p class="code-instruction"><strong>Enter the code displayed above to proceed:</strong></p>
+
+        <input type="text" name="code-confirm" class="code-confirm" placeholder="Enter the code" maxlength="5"
+            pattern="[A-Za-z0-9]*" title="Enter the code" style="text-transform:uppercase;" autofocus required
+            autocomplete="false" style="text-transform:uppercase;">
+        <input class="pay" type="submit" value="Proceed" name="proceed">
+    </form>
 </body>
+<script>
+    function addCommas(number) {
+        return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
+    var amountElement = document.getElementById("formattedAmount");
+    amountElement.innerText = addCommas(amountElement.innerText);
+</script>
 
 </html>

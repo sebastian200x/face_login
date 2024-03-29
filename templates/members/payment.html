@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Payment History</title>
+    <title>Members Payment</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/members/payment.css') }}">
     {% include 'navbar.html' %}
 </head>
@@ -12,6 +12,9 @@
 <body>
     <div class="table">
         <h1>Members Payment</h1>
+
+
+        <h3>New Members</h3>
         <table>
             <thead>
                 <tr>
@@ -24,7 +27,7 @@
                 {% if arranger %}
                 {% for arrangers in arranger %}
                 <tr>
-                    <td>{{ arrangers[2] }}</td>
+                    <td><span id="formattedAmount">{{ arrangers[2] }}</span></td>
                     <td>{{ arrangers[6].strftime('%B %d, %Y') }}</td>
                     <td>
                         <form action="/members/pay/{{arrangers[0]}}">
@@ -35,12 +38,19 @@
                 {% endfor %}
                 {% else %}
                 <tr>
-                    <td colspan="3">No Result</td>
+                    <td colspan="3">No Bills Yet</td>
                 </tr>
                 {% endif %}
             </tbody>
         </table>
     </div>
 </body>
+<script>
+    function addCommas(number) {
+        return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+    var amountElement = document.getElementById("formattedAmount");
+    amountElement.innerText = addCommas(amountElement.innerText);
+</script>
 
 </html>

@@ -9,9 +9,39 @@
     {% include 'navbar.html' %}
 </head>
 
-<body>
+<body style="padding-top: 100px;">
     <div class="table">
-        <h1>Payment History</h1>
+        <h1 class="center">Payment History</h1>
+
+
+        <h2 class="indent">Unverified Payments</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Transaction Type</th>
+                    <th>Amount to pay</th>
+                    <th>Code</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    {% if unverified %}
+                    {% for unverifieds in unverified %}
+                    <td>{{ unverifieds[3] }}</td>
+                    <td><span id="formattedAmount">{{ unverifieds[2] }}</span></td>
+                    <td>{{ unverifieds[8] }}</td>
+                    {%endfor%}
+                    {% else %}
+                    <td colspan="4">No Result</td>
+                    {% endif %}
+                </tr>
+            </tbody>
+        </table>
+
+
+
+
+        <h2 class="indent">Verified Payments</h2>
         <table>
             <thead>
                 <tr>
@@ -23,11 +53,11 @@
             </thead>
             <tbody>
                 <tr>
-                    {% if history %}
-                    {% for histories in history %}
-                    <td>{{ histories[4] }}</td>
-                    <td>{{ histories[2] }}</td>
-                    <td>{{ histories[3] }}</td>
+                    {% if verified %}
+                    {% for verifieds in verified %}
+                    <td>{{ verifieds[4] }}</td>
+                    <td><span id="formattedAmount">{{ verifieds[2] }}</span></td>
+                    <td>{{ verifieds[3] }}</td>
                     <td>
                         <button class="btn-view">View</button>
                     </td>
@@ -41,3 +71,12 @@
 </body>
 
 </html>
+
+<script>
+    function addCommas(number) {
+        return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
+    var amountElement = document.getElementById("formattedAmount");
+    amountElement.innerText = addCommas(amountElement.innerText);
+</script>

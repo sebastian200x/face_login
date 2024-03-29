@@ -29,6 +29,10 @@
       <li class="title">Payment Management</li>
       <li class="item {% if request.path == '/admin/payment_arrangement' %}active{% endif %}"><a
           href="/admin/payment_arrangement"><i class="fa-solid fa-note-sticky"></i> Payment Arrangement</a></li>
+
+      <li class="item {% if request.path == '/members/payment_history' %}active{% endif %}"><a
+          href="/members/payment_history"><i class="fa-solid fa-money-check-dollar"></i> Payment
+          Verification</a></li>
       <li class="item {% if request.path == '/admin/payment_history' %}active{% endif %}"><a
           href="/admin/payment_history"><i class="fa-solid fa-cash-register"></i> Payment History</a></li>
 
@@ -47,9 +51,11 @@
       <li class="item {% if request.path == '/members/payment' %}active{% endif %}"><a href="/members/payment"><i
             class="fa-solid fa-money-bill-wave"></i> Members Payment</a></li>
 
+
       <li class="item {% if request.path == '/members/payment_history' %}active{% endif %}"><a
           href="/members/payment_history"><i class="fa-solid fa-money-check-dollar"></i> Payment
           History</a></li>
+
 
       <li class="title">Face Recognition</li>
       <li class="item {% if request.path == '/faceregister' %}active{% endif %}"><a href="/faceregister"><i

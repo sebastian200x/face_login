@@ -10,44 +10,45 @@
 </head>
 
 <body>
+    <div class="width">
+        <h1>PAYMENT ARRANGEMENT</h1>
+        <br>
 
-    <h1>PAYMENT ARRANGEMENT</h1>
-    <br>
-
-    <div class="half">
-        <div class="half-half">
+        <div class="half">
+            <div class="half-half">
+            </div>
+            <div class="half-half">
+                <input type="text" id="searchArrangement" class="search-input"
+                    onkeyup="filterTable('searchArrangement', 'arrangementTable')" placeholder="Search for names...">
+            </div>
         </div>
-        <div class="half-half">
-            <input type="text" id="searchArrangement" class="search-input"
-                onkeyup="filterTable('searchArrangement', 'arrangementTable')" placeholder="Search for names...">
-        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th class="sort-btn" onclick="sortTable(0, 'arrangementTable')">Name</th>
+                    <th>Amount</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if new %}
+                {% for newacc in new %}
+                <tr>
+                    <td>{{ newacc[15] }}, {{ newacc[13] }} {{ newacc[14] }}</td>
+                    <td><span id="formattedAmount">{{ newacc[10] }}</span></td>
+                    <td>
+                        <a class="button remind" href="/admin/payment_arrange/{{ newacc[1] }}">Arrange Payment</a>
+                    </td>
+                </tr>
+                {% endfor %}
+                {% else %}
+                <tr>
+                    <td colspan="3">No account to manage</td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
     </div>
-    <table class="table">
-        <thead>
-            <tr>
-                <th class="sort-btn" onclick="sortTable(0, 'arrangementTable')">Name</th>
-                <th>Amount</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% if new %}
-            {% for newacc in new %}
-            <tr>
-                <td>{{ newacc[15] }}, {{ newacc[13] }} {{ newacc[14] }}</td>
-                <td>{{ newacc[10] }}</td>
-                <td>
-                    <a class="button remind" href="/admin/payment_arrange/{{ newacc[1] }}">Arrange Payment</a>
-                </td>
-            </tr>
-            {% endfor %}
-            {% else %}
-            <tr>
-                <td colspan="3">No account to manage</td>
-            </tr>
-            {% endif %}
-        </tbody>
-    </table>
 </body>
 <script>
     function filterTable(inputId, tableId) {
@@ -112,6 +113,12 @@
             }
         }
     }
+
+    function addCommas(number) {
+        return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+    var amountElement = document.getElementById("formattedAmount");
+    amountElement.innerText = addCommas(amountElement.innerText);
 </script>
 
 </html>

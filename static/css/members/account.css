@@ -145,3 +145,36 @@ label {
 .double-double {
     width: 49%;
 }
+
+@media screen and (max-width: 700px) {
+
+    .centered {
+        border-radius: 30px;
+        width: 85%;
+        margin-bottom: 30px;
+    }
+
+    .property-info {
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr;
+    }
+
+    .personal-info {
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr;
+    }
+
+    .account-info {
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr;
+    }
+
+    .button {
+        width: 60%;
+    }
+
+    .login {
+        width: 60%;
+    }
+
+}
