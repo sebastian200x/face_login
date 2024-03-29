@@ -130,6 +130,35 @@ input[type="text"] {
     margin: 0 auto;
 }
 
+.copy-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+}
+
+.copy-text {
+    margin-right: 10px;
+    border: 1px solid black;
+    border-radius: 5px;
+    padding: 20px;
+    cursor: default;
+}
+
+.copy-button {
+    border: 1px solid #ccc;
+    background-color: #f0f0f0;
+    cursor: pointer;
+    border: 1px solid black;
+    border-radius: 5px;
+    padding: 20px;
+}
+
+/* Style for the copy button on hover */
+.copy-button:hover {
+    background-color: #e0e0e0;
+}
+
 @media screen and (max-width: 1024px) {
     .payment-forms {
         width: 60%;

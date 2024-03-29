@@ -11,7 +11,7 @@
 
 <body style="margin-top: 100px;">
     <div class="payment-forms">
-        <form method="POST" action="/choice" >
+        <form method="POST" action="">
             <h1 class="center">G-Cash Payment</h1>
             {% if gcash%}
             {% for g in gcash %}
@@ -21,7 +21,11 @@
                 <h3>Due date: {{g[6].strftime('%B %d, %Y')}}</h3>
             </div>
             <br>
-            <!-- <img src="{{ url_for('static', filename='images/gcash.jpg') }}" alt="gcash-qr" class="qr"> -->
+            <img src="{{ url_for('static', filename='images/gcash.jpg') }}" alt="gcash-qr" class="qr" id="qrCode">
+            <div class="copy-container" id="copy">
+                <span class="copy-text">09564629898</span>
+                <button class="copy-button" onclick="copyText()"><i class="fa-regular fa-copy"></i> COPY</button>
+            </div>
             <br>
             <div class="payment-details">
                 <div class="rows-left">
@@ -56,3 +60,37 @@
 </body>
 
 </html>
+
+<script>
+
+    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+        qrCode.style.display = 'none';
+    }
+    else {
+        copy.style.display = 'none';
+    }
+
+
+    function copyText() {
+        // Get the text to copy
+        const textToCopy = document.querySelector('.copy-text');
+
+        // Create a textarea element to hold the text temporarily
+        const textarea = document.createElement('textarea');
+        textarea.value = textToCopy.innerText;
+        document.body.appendChild(textarea);
+
+        // Select the text in the textarea
+        textarea.select();
+        textarea.setSelectionRange(0, 99999); // For mobile devices
+
+        // Copy the selected text to the clipboard
+        document.execCommand('copy');
+
+        // Remove the textarea from the DOM
+        document.body.removeChild(textarea);
+
+        // Optionally, provide feedback to the user
+        alert('Text copied to clipboard!');
+    }
+</script>
