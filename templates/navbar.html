@@ -5,7 +5,7 @@
 
 <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" /> -->
 
-<nav class="navbar">
+<nav class="navbar" style="user-select: none;">
 
   {% if request.path == '/login' or request.path == '/' or request.path == '/home' or request.path == '/register' or
   request.path == '/facelogin' %}
@@ -22,60 +22,62 @@
       {% if session['is_admin'] == 'yes' %}
       <li class="divider"></li>
       <li class="title">Administration</li>
-      <li class="item {% if request.path == '/admin/dashboard' %}active{% endif %}"><a href="/admin/dashboard"><i
-            class="fa-solid fa-gauge"></i> Dashboard</a></li>
-      <li class="item {% if request.path == '/admin/members_info' %}active{% endif %}"><a href="/admin/members_info"><i
-            class="fa-solid fa-address-book"></i> Members Info</a></li>
+      <li class="item {% if request.path == '/admin/dashboard' %}active{% endif %}"><a href="/admin/dashboard"
+          draggable="false"><i class="fa-solid fa-gauge"></i> Dashboard</a></li>
+      <li class="item {% if request.path == '/admin/members_info' %}active{% endif %}"><a href="/admin/members_info"
+          draggable="false"><i class="fa-solid fa-address-book"></i> Members Info</a></li>
       <li class="title">Payment Management</li>
       <li class="item {% if request.path == '/admin/payment_arrangement' %}active{% endif %}"><a
-          href="/admin/payment_arrangement"><i class="fa-solid fa-note-sticky"></i> Payment Arrangement</a></li>
+          href="/admin/payment_arrangement" draggable="false"><i class="fa-solid fa-note-sticky"></i> Payment
+          Arrangement</a></li>
 
       <li class="item {% if request.path == '/members/payment_history' %}active{% endif %}"><a
-          href="/members/payment_history"><i class="fa-solid fa-money-check-dollar"></i> Payment
+          href="/admin/payment_verification" draggable="false"><i class="fa-solid fa-money-check-dollar"></i> Payment
           Verification</a></li>
       <li class="item {% if request.path == '/admin/payment_history' %}active{% endif %}"><a
-          href="/admin/payment_history"><i class="fa-solid fa-cash-register"></i> Payment History</a></li>
+          href="/admin/payment_history" draggable="false"><i class="fa-solid fa-cash-register"></i> Payment History</a>
+      </li>
 
       <li class="title">Face Recognition</li>
-      <li class="item {% if request.path == '/faceregister' %}active{% endif %}"><a href="/faceregister"><i
-            class="fa-solid fa-face-smile"></i> Face Register</a></li>
+      <li class="item {% if request.path == '/faceregister' %}active{% endif %}"><a href="/faceregister"
+          draggable="false"><i class="fa-solid fa-face-smile"></i> Face Register</a></li>
       {% endif %}
 
       {% if session['is_admin'] == 'no' %}
       <li class="divider"></li>
       <li class="title">User Management</li>
-      <li class="item {% if request.path == '/members/home' %}active{% endif %}"><a href="/members/home"><i
-            class="fa-solid fa-circle-info"></i> Members Info</a></li>
+      <li class="item {% if request.path == '/members/home' %}active{% endif %}"><a href="/members/home"
+          draggable="false"><i class="fa-solid fa-circle-info"></i> Members Info</a></li>
 
       <li class="title">Payment Management</li>
-      <li class="item {% if request.path == '/members/payment' %}active{% endif %}"><a href="/members/payment"><i
-            class="fa-solid fa-money-bill-wave"></i> Members Payment</a></li>
+      <li class="item {% if request.path == '/members/payment' %}active{% endif %}"><a href="/members/payment"
+          draggable="false"><i class="fa-solid fa-money-bill-wave"></i> Members Payment</a></li>
 
 
       <li class="item {% if request.path == '/members/payment_history' %}active{% endif %}"><a
-          href="/members/payment_history"><i class="fa-solid fa-money-check-dollar"></i> Payment
+          href="/members/payment_history" draggable="false"><i class="fa-solid fa-money-check-dollar"></i> Payment
           History</a></li>
 
 
       <li class="title">Face Recognition</li>
-      <li class="item {% if request.path == '/faceregister' %}active{% endif %}"><a href="/faceregister"><i
-            class="fa-solid fa-face-smile"></i> Face Register</a></li>
+      <li class="item {% if request.path == '/faceregister' %}active{% endif %}"><a href="/faceregister"
+          draggable="false"><i class="fa-solid fa-face-smile"></i> Face Register</a></li>
       {% endif %}
 
       <div class="flex">
         <div class="flex-half">
-          <li><a href="/account"><i class="fa-solid fa-user-tie"></i> Profile</a></li>
+          <li><a href="/account" draggable="false"><i class="fa-solid fa-user-tie"></i> Profile</a></li>
         </div>
         <div class="flex-half">
-          <li><a href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+          <li><a href="/logout" draggable="false"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
         </div>
       </div>
     </ul>
   </div>
-  <a href="#!" class="close sidenav-overlay"></a>
+  <a href="#!" class="close sidenav-overlay" draggable="false"></a>
   {% endif %}
 
-  <a class="navbar-brand" href="/">
+  <a class="navbar-brand" href="/" draggable="false">
     <img draggable="false" src="{{ url_for('static', filename='images/logo-s.png') }}" alt="logo-s"
       class="navbar-img" />
     HOA Finance

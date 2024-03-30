@@ -7,7 +7,6 @@
     list-style: none;
     text-decoration: none;
     font-family: 'Josefin Sans', sans-serif;
-    letter-spacing: 1px;
 }
 
 /* sidenav */
@@ -238,23 +237,3 @@ ul {
 .flex-half {
     width: 50%;
 }
-
-/* Full screen sidenav when in phone */
-/* @media screen and (max-width: 768px) {
-    #sidenav {
-        width: 100%;
-
-        max-width: none;
-        left: -100%;
-
-        transition: left .35s;
-    }
-
-    #sidenav:target {
-        left: 0;
-    }
-
-    #sidenav:target+.sidenav-overlay {
-        left: 0;
-    }
-} */

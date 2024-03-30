@@ -17,7 +17,7 @@
             {% for g in gcash %}
             <div class="pay-detail">
                 <h3>Payment Details: </h3><br>
-                <h3>Amount to pay: {{g[2]}} </h3>
+                <h3>Amount to pay: <span id="formattedAmount">{{ g[2] }}</span></h3>
                 <h3>Due date: {{g[6].strftime('%B %d, %Y')}}</h3>
             </div>
             <br>
@@ -70,6 +70,12 @@
         copy.style.display = 'none';
     }
 
+    function addCommas(number) {
+        return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
+    var amountElement = document.getElementById("formattedAmount");
+    amountElement.innerText = addCommas(amountElement.innerText);
 
     function copyText() {
         // Get the text to copy

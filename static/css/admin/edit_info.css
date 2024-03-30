@@ -72,8 +72,7 @@
   }
 
 
-  .close,
-  .back {
+  .close {
     background-color: rgb(88, 88, 88);
   }
 

@@ -1,19 +1,24 @@
 .container {
-    max-width: 1200px;
+    max-width: 80%;
     margin: 20px auto;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    grid-gap: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
     padding: 20px;
 }
 
+
 .card {
+    width: 340px;
     background-color: #fff;
     border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    /* border: 1px solid black; */
     padding: 20px;
     position: relative;
 }
+
 
 .card h2 {
     font-size: 24px;
@@ -24,6 +29,7 @@
     font-size: 16px;
     line-height: 1.6;
     padding: 30px;
+    margin-bottom: 20px;
 }
 
 .button {
@@ -39,4 +45,20 @@
 
 .button:hover {
     background-color: #548d8d;
+}
+
+.red {
+    background-color: rgb(255, 69, 69);
+    color: white;
+}
+
+.red:hover {
+    background-color: rgb(183, 50, 50);
+
+}
+
+@media screen and (max-width: 550px) {
+    .card {
+        width: 100%;
+    }
 }

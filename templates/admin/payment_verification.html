@@ -4,51 +4,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Payment Arrangement</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/payment_arrangement.css') }}">
+    <title>Payment Verification</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/payment_verification.css') }}">
     {% include 'navbar.html' %}
 </head>
 
-<body>
-    <div class="width">
-        <h1>PAYMENT ARRANGEMENT</h1>
-        <br>
+<body style="padding-top: 100px;">
+    <h1>Payment Verification</h1>
 
-        <div class="half">
-            <div class="half-half">
-            </div>
-            <div class="half-half">
-                <input type="text" id="searchArrangement" class="search-input"
-                    onkeyup="filterTable('searchArrangement', 'arrangementTable')" placeholder="Search for names...">
-            </div>
+
+
+    <div class="half">
+        <div class="half-half">
+            <h2>For Payment Approval :</h2>
         </div>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th class="sort-btn" onclick="sortTable(0, 'arrangementTable')">Name</th>
-                    <th>Amount</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% if new %}
-                {% for newacc in new %}
-                <tr>
-                    <td>{{ newacc[15] }}, {{ newacc[13] }} {{ newacc[14] }}</td>
-                    <td><span id="formattedAmount">{{ newacc[10] }}</span></td>
-                    <td>
-                        <a class="button remind" href="/admin/payment_arrange/{{ newacc[1] }}">Arrange Payment</a>
-                    </td>
-                </tr>
-                {% endfor %}
-                {% else %}
-                <tr>
-                    <td colspan="3">No account to manage</td>
-                </tr>
-                {% endif %}
-            </tbody>
+        <div class="half-half">
+            <input type="text" id="searchverification" class="search-input"
+                onkeyup="filterTable('searchverification', 'verificationtable')" placeholder="Search for info...">
+        </div>
+    </div>
+    <div class="scrollable">
+        <table id="verificationtable" class="table">
+            <tr>
+                <th class="sort-btn" onclick="sortTable(0, 'verificationtable')">Transaction Type</th>
+                <th>Amount to pay</th>
+                <th>Manage</th>
+            </tr>
+            {% if unverified %}
+            {% for unverifieds in unverified %}
+            <tr>
+                <td>{{ unverifieds[3] }}</td>
+                <td><span id="formattedAmount">{{ unverifieds[2] }}</span></td>
+                <td>
+                    <form action="/admin/view_history/{{unverifieds[0]}}" method="POST">
+                        <input type="submit" class="btn-view" value="Verify">
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+            {% else %}
+            <tr>
+                <td colspan="4">No Result</td>
+            </tr>
+            {% endif %}
         </table>
     </div>
+
+
 </body>
 <script>
     function filterTable(inputId, tableId) {
@@ -113,12 +115,6 @@
             }
         }
     }
-
-    function addCommas(number) {
-        return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    }
-    var amountElement = document.getElementById("formattedAmount");
-    amountElement.innerText = addCommas(amountElement.innerText);
 </script>
 
 </html>

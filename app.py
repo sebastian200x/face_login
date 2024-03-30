@@ -653,21 +653,7 @@ def update_info(id):
     return redirect(url_for("admin_members_info"))
 
 
-@app.route("/admin/payment_history", methods=["POST", "GET"])
-def admin_payment_history():
-    history = conn.cursor()
-    history.execute(
-        """
-        SELECT tbl_transaction.*, tbl_userinfo.*, tbl_useracc.*
-            FROM tbl_transaction
-            JOIN tbl_userinfo ON tbl_transaction.user_id = tbl_userinfo.user_id
-            JOIN tbl_useracc ON tbl_transaction.user_id = tbl_useracc.user_id
-            WHERE tbl_transaction.transc_type != 'arrangement'
-            ORDER BY tbl_transaction.date;
-        """
-    )
-    history = history.fetchall()
-    return adminredirect("/admin/payment_history.html", history=history)
+
 
 
 @app.route("/admin/payment_arrangement", methods=["POST", "GET"])
@@ -739,6 +725,46 @@ def admin_payment_arranged(id):
         return redirect(url_for("admin_payment_arrangement"))
 
     return render_template("payment_arranged.html")
+
+
+@app.route("/admin/payment_verification", methods=["POST", "GET"])
+def admin_payment_verification():
+    unverified = conn.cursor()
+    unverified.execute(
+        """
+        SELECT
+            *
+        FROM
+            tbl_transaction
+        WHERE
+            transc_type IN ('gcash', 'cash')
+            AND is_verified = 'no'
+            AND (code IS NOT NULL OR proof IS NOT NULL)
+        """,
+    )
+    unverified = unverified.fetchall()
+    return adminredirect("/admin/payment_verification.html", unverified=unverified)
+
+
+
+
+@app.route("/admin/payment_history", methods=["POST", "GET"])
+def admin_payment_history():
+    history = conn.cursor()
+    history.execute(
+        """
+        SELECT tbl_transaction.*, tbl_userinfo.*, tbl_useracc.*
+            FROM tbl_transaction
+            JOIN tbl_userinfo ON tbl_transaction.user_id = tbl_userinfo.user_id
+            JOIN tbl_useracc ON tbl_transaction.user_id = tbl_useracc.user_id
+            WHERE tbl_transaction.transc_type != 'arrangement'
+            AND tbl_transaction.is_verified = 'yes'
+            ORDER BY tbl_transaction.date;
+        """
+    )
+    history = history.fetchall()
+    return adminredirect("/admin/payment_history.html", history=history)
+
 
 
 @app.route("/members/home")
@@ -950,8 +976,10 @@ def members_payment_history():
         FROM
             tbl_transaction
         WHERE
-            transc_type = 'gcash' OR transc_type = 'cash' AND user_id = %s AND is_verified = 'no' AND
-            (code IS NOT NULL OR proof IS NOT NULL)
+            transc_type IN ('gcash', 'cash')
+            AND user_id = %s
+            AND is_verified = 'no'
+            AND (code IS NOT NULL OR proof IS NOT NULL)
         """,
         (
             id,
@@ -967,8 +995,10 @@ def members_payment_history():
         FROM
             tbl_transaction
         WHERE
-            transc_type = 'gcash' OR transc_type = 'cash' AND user_id = %s AND is_verified = 'yes' AND
-            (code IS NOT NULL OR proof IS NOT NULL)
+            transc_type IN ('gcash', 'cash')
+            AND user_id = %s 
+            AND is_verified = 'yes' 
+            AND (code IS NOT NULL OR proof IS NOT NULL)
         """,
         (
             id,
@@ -978,6 +1008,7 @@ def members_payment_history():
     
     
     return memberredirect("members/payment_history.html", unverified=unverified, verified=verified)
+
 
 
 @app.route("/facelogin", methods=["GET", "POST"])

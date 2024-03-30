@@ -6,7 +6,7 @@ table {
     width: 80%;
     border-collapse: collapse;
     text-align: center;
-    margin: 40px auto;
+    margin: 10px auto 30px auto;
 }
 
 .table td,
@@ -86,6 +86,6 @@ output {
 
 @media (max-width: 660px) {
     table {
-        width: 99%;
+        width: 100%;
     }
 }
