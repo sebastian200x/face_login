@@ -34,7 +34,7 @@
                 <td>{{ unverifieds[3] }}</td>
                 <td><span id="formattedAmount">{{ unverifieds[2] }}</span></td>
                 <td>
-                    <form action="">
+                    <form action="" method="POST" class="payment">
                         <input type="submit" class="btn-view" value="Verify"
                             formaction="/admin/payment_verify/{{unverifieds[0]}}">
                     </form>

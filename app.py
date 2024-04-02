@@ -765,13 +765,88 @@ def admin_payment_verify(id):
     )
     to_verify = to_verify.fetchall()
     
+    if request.method == 'POST':
+        session['payment_id'] = id
+        session['member'] = to_verify[0][1]
     
     return adminredirect("/admin/payment_verify.html", to_verify=to_verify)
 
 @app.route("/admin/payment_verified", methods=["POST", "GET"])
 def admin_payment_verified():
-    return adminredirect("/admin/payment_verify.html")
+    
+    if 'member' in session:
+        member = session['member']
+    else:
+        return redirect("/admin/payment_history")
+    
+    if 'payment_id' in session:
+        id = session['payment_id']
+    else:
+        return redirect("/admin/payment_history")
+    
+    cursor = conn.cursor()
+    cursor.execute(
+        """
+        SELECT * FROM tbl_transaction WHERE transac_id = %s ;
+        """,
+        (id,),
+    )
+    data = cursor.fetchone()
+    
+    if data:
+        sqlbalance = data[2]
+        sqlcode = data[8]
+        
+        if request.method == 'POST':
+            amount = int(request.form.get("amount"))
+            
+            if amount <= sqlbalance:
+                if request.form.get("code") == sqlcode:
+                    update_cursor = conn.cursor()
+                    update_cursor.execute(
+                        """
+                        UPDATE tbl_transaction
+                        SET is_verified = 'yes',
+                        amount = %s,
+                        date = NOW()
+                        WHERE transac_id = %s
+                        """,
+                        (amount,id,),
+                    )
+                    conn.commit()
+                    return redirect("/admin/payment_history")
+                else:
+                    flash('Code is incorrect, please check your code and try again.', 'error')
+                    return redirect(url_for("admin_payment_verify", id=id))
+            else:
+                flash('The amount you entered is greater than the amount of debt, please try again.', 'error')
+                return redirect(url_for("admin_payment_verify", id=id))
+            
+        return redirect("/admin/payment_verify.html")
+    else:
+        return redirect("/admin/payment_verification.html")
 
+
+
+    
+    
+    
+
+
+
+
+
+# update_cursor = conn.cursor()
+#             update_cursor.execute(
+#                 """
+#                 UPDATE tbl_transaction
+#                 SET is_verified = 'yes',
+#                 date = NOW()
+#                 WHERE transac_id = %s
+#                 """,
+#                 (id,),
+#             )
+#             conn.commit()
 
 @app.route("/admin/payment_history", methods=["POST", "GET"])
 def admin_payment_history():

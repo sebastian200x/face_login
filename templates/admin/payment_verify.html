@@ -15,7 +15,7 @@
 
         {% if to_verify %}
         {% for to_verifies in to_verify %}
-        <form id="paymentform" method="POST" action="">
+        <form action="/admin/payment_verified" method="POST">
             <div class="form-group">
                 <label for="name">Name: {{to_verifies[12]}} {{to_verifies[13]}} {{to_verifies[14]}} </label>
             </div>
@@ -27,20 +27,26 @@
             </div>
             <div class="form-group">
                 <label for="amount">Amount: ₱</label>
-                <input type="number" id="amount" name="amount" value="{{to_verifies[2]}}">
+                <input type="number" id="amount" name="amount" value="{{to_verifies[2]}}" required>
             </div>
             <div class="form-group cash-verify">
                 <label for="code">Enter the code to verify the payment:</label>
                 <input type="text" id="code" name="code" required>
             </div>
-            <button type="submit">Verify Payment</button>
+            <input type="submit" class="button" value="Verify Payment">
         </form>
-
         {% endfor %}
         {% endif %}
-
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+        {% if category == 'error' %}
+        <script>
+            alert('{{ message }}');
+        </script>
+        {% endif %}
+        {% endfor %}
+        {% endwith %}
     </div>
-
 </body>
 
 </html>
