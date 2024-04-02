@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Verification</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/payment_verify.css') }}">
+    {% include 'navbar.html' %}
+</head>
+
+<body style="padding-top: 100px; background-color:#6FB9B9;">
+    <div class="container">
+        <h2>Payment Verification</h2>
+
+        {% if to_verify %}
+        {% for to_verifies in to_verify %}
+        <form id="paymentform" method="POST" action="">
+            <div class="form-group">
+                <label for="name">Name: {{to_verifies[12]}} {{to_verifies[13]}} {{to_verifies[14]}} </label>
+            </div>
+            <div class="form-group">
+                <label for="due">Due Date: {{to_verifies[6]}}</label>
+            </div>
+            <div class="form-group">
+                <label for="transac_type">Transaction Type: {{to_verifies[3]}}</label>
+            </div>
+            <div class="form-group">
+                <label for="amount">Amount: ₱</label>
+                <input type="number" id="amount" name="amount" value="{{to_verifies[2]}}">
+            </div>
+            <div class="form-group cash-verify">
+                <label for="code">Enter the code to verify the payment:</label>
+                <input type="text" id="code" name="code" required>
+            </div>
+            <button type="submit">Verify Payment</button>
+        </form>
+
+        {% endfor %}
+        {% endif %}
+
+    </div>
+
+</body>
+
+</html>

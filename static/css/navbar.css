@@ -1,5 +1,16 @@
 @import url('https://fonts.googleapis.com/css?family=Josefin+Sans&display=swap');
 
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+
 * {
     margin: 0;
     padding: 0;
@@ -162,11 +173,9 @@ ul {
     width: 100%;
     z-index: 9999;
     background-color: #6FB9B9;
-    padding-top: .5%;
-    padding-bottom: .5%;
+    padding: .5% 0;
     display: flex;
     align-items: center;
-    /* justify-content: center; */
 
 }
 
@@ -175,7 +184,6 @@ ul {
     font-weight: bold;
     color: #fff;
     text-decoration: none;
-    /* border: 1px solid #000; */
     display: flex;
     align-items: center;
 }

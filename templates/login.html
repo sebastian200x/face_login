@@ -42,78 +42,71 @@
     </div>
     <div class="right">
         <div class="centered">
-            <div class="flex-container centered">
-                <form action="/login" method="POST" autocomplete="off">
-                    <div class="imgcontainer">
-                        <img draggable="false" src="{{ url_for('static', filename='images/logo-s.png') }}" alt="Avatar"
-                            class="avatar">
-                        <br><br><br>
-
-
-                        <h1 style="color: #545454;">LOGIN</h1>
-                    </div>
-                    <br><br>
-                    <label for="uname">Username:</label>
-                    {% if messager == 1 %}
-                    <input type="text" name="username" id="uname" class="wrong" pattern="^\S{3,}$"
-                        title="Username must have 3 characters and cannot have spaces" placeholder="Enter Username"
-                        required>
-                    <center>
-                        <header class="inv"
-                            style="color:white;box-shadow: 5px 7px 15px black;border: 2px solid red;border-radius: 50px;background-color: red;width:200px">
-                            &#9997 Enter username.
-                        </header>
-                    </center>
-                    {% elif messager == 3 %}
-                    <input type="text" name="username" id="uname" class="wrong" pattern="^\S{3,}$"
-                        title="Username must have 3 characters and cannot have spaces" placeholder="Enter Username"
-                        required>
-                    <center>
-                        <header
-                            style="color:white;box-shadow: 5px 7px 15px black;border: 2px solid red;border-radius: 50px;background-color: red;width:300px ">
-                            &#10060 Invalid password or username.
-                        </header>
-                    </center>
-                    {% else %}
-                    <input type="text" name="username" id="uname" pattern="^\S{3,}$"
-                        title="Username must have 3 characters and cannot have spaces" placeholder="Enter Username"
-                        autofocus required>
-                    <br><br>
-                    {% endif %}
-
-                    <label for="psw">Password:</label>
-
-                    {% if messager == 2 %}
-                    <input type="password" name="password" id="psw" class="wrong" pattern="^\S{3,}$"
-                        title="Password must have 3 characters and cannot have spaces" placeholder="Enter Password"
-                        required autocomplete="false">
-                    <center>
-                        <header
-                            style="color:white;box-shadow: 5px 7px 15px black;border: 2px solid red;border-radius: 50px;background-color: red;width:200px">
-                            &#9997 Enter password.
-                        </header>
-                    </center>
-                    {% elif messager == 3 %}
-                    <input type="password" name="password" id="psw" class="wrong" pattern="^\S{3,}$"
-                        title="Password must have 3 characters and cannot have spaces" placeholder="Enter Password"
-                        required autocomplete="false">
-
-                    {% else %}
-                    <input type="password" name="password" id="psw" pattern="^\S{3,}$"
-                        title="Password must have 3 characters and cannot have spaces" placeholder="Enter Password"
-                        required autocomplete="false">
-                    {% endif %}
+            <form action="/login" method="POST" autocomplete="off">
+                <div class="imgcontainer">
+                    <img draggable="false" src="{{ url_for('static', filename='images/logo-s.png') }}" alt="Avatar"
+                        class="avatar">
                     <br><br><br>
-                    <input class="button" type="submit" value="Login" name="login">
-                </form>
-                <style>
 
-                </style>
 
+                    <h1 style="color: #545454;">LOGIN</h1>
+                </div>
+                <br><br>
+                <label for="uname">Username:</label>
+                {% if messager == 1 %}
+                <input type="text" name="username" id="uname" class="wrong" pattern="^\S{3,}$"
+                    title="Username must have 3 characters and cannot have spaces" placeholder="Enter Username"
+                    required>
+                <center>
+                    <header class="inv"
+                        style="color:white;box-shadow: 5px 7px 15px black;border: 2px solid red;border-radius: 50px;background-color: red;width:200px">
+                        &#9997 Enter username.
+                    </header>
+                </center>
+                {% elif messager == 3 %}
+                <input type="text" name="username" id="uname" class="wrong" pattern="^\S{3,}$"
+                    title="Username must have 3 characters and cannot have spaces" placeholder="Enter Username"
+                    required>
+                <center>
+                    <header
+                        style="color:white;box-shadow: 5px 7px 15px black;border: 2px solid red;border-radius: 50px;background-color: red;width:300px ">
+                        &#10060 Invalid password or username.
+                    </header>
+                </center>
+                {% else %}
+                <input type="text" name="username" id="uname" pattern="^\S{3,}$"
+                    title="Username must have 3 characters and cannot have spaces" placeholder="Enter Username"
+                    autofocus required>
+                <br><br>
+                {% endif %}
+
+                <label for="psw">Password:</label>
+
+                {% if messager == 2 %}
+                <input type="password" name="password" id="psw" class="wrong" pattern="^\S{3,}$"
+                    title="Password must have 3 characters and cannot have spaces" placeholder="Enter Password" required
+                    autocomplete="false">
+                <center>
+                    <header
+                        style="color:white;box-shadow: 5px 7px 15px black;border: 2px solid red;border-radius: 50px;background-color: red;width:200px">
+                        &#9997 Enter password.
+                    </header>
+                </center>
+                {% elif messager == 3 %}
+                <input type="password" name="password" id="psw" class="wrong" pattern="^\S{3,}$"
+                    title="Password must have 3 characters and cannot have spaces" placeholder="Enter Password" required
+                    autocomplete="false">
+
+                {% else %}
+                <input type="password" name="password" id="psw" pattern="^\S{3,}$"
+                    title="Password must have 3 characters and cannot have spaces" placeholder="Enter Password" required
+                    autocomplete="false">
+                {% endif %}
+                <br><br><br>
+                <input class="button" type="submit" value="Login" name="login">
                 <a href="/facelogin" class="face-password-link">Face Login</a>
                 <a href="/register" class="face-password-link">Register</a>
-
-            </div>
+            </form>
         </div>
     </div>
 </body>

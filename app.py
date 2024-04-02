@@ -735,17 +735,42 @@ def admin_payment_verification():
         SELECT
             *
         FROM
-            tbl_transaction
+            tbl_transaction, tbl_userinfo
         WHERE
-            transc_type IN ('gcash', 'cash')
-            AND is_verified = 'no'
-            AND (code IS NOT NULL OR proof IS NOT NULL)
+            tbl_transaction.transc_type IN ('gcash', 'cash')
+            AND tbl_transaction.is_verified = 'no'
+            AND (tbl_transaction.code IS NOT NULL OR tbl_transaction.proof IS NOT NULL)
+            
+            AND tbl_userinfo.user_id = tbl_transaction.transac_id
         """,
     )
     unverified = unverified.fetchall()
     return adminredirect("/admin/payment_verification.html", unverified=unverified)
 
+@app.route("/admin/payment_verify/<int:id>", methods=["POST", "GET"])
+def admin_payment_verify(id):
+    to_verify = conn.cursor()
+    to_verify.execute(
+        """
+            SELECT
+                *
+            FROM
+                tbl_transaction, tbl_userinfo
+            WHERE
+                tbl_transaction.transac_id = %s
+            AND 
+                tbl_userinfo.user_id = tbl_transaction.user_id 
+            """,
+            (id,),
+    )
+    to_verify = to_verify.fetchall()
+    
+    
+    return adminredirect("/admin/payment_verify.html", to_verify=to_verify)
 
+@app.route("/admin/payment_verified", methods=["POST", "GET"])
+def admin_payment_verified():
+    return adminredirect("/admin/payment_verify.html")
 
 
 @app.route("/admin/payment_history", methods=["POST", "GET"])

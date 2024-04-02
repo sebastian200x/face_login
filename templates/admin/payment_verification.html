@@ -12,11 +12,9 @@
 <body style="padding-top: 100px;">
     <h1>Payment Verification</h1>
 
-
-
     <div class="half">
         <div class="half-half">
-            <h2>For Payment Approval :</h2>
+            <h2>For Payment Approval:</h2>
         </div>
         <div class="half-half">
             <input type="text" id="searchverification" class="search-input"
@@ -36,129 +34,85 @@
                 <td>{{ unverifieds[3] }}</td>
                 <td><span id="formattedAmount">{{ unverifieds[2] }}</span></td>
                 <td>
-                    <button class="btn-view"
-                        onclick="openModal('{{ unverifieds[0] }}', '{{ unverifieds[3] }}', '{{ unverifieds[2] }}')">Verify</button>
+                    <form action="">
+                        <input type="submit" class="btn-view" value="Verify"
+                            formaction="/admin/payment_verify/{{unverifieds[0]}}">
+                    </form>
                 </td>
             </tr>
             {% endfor %}
             {% else %}
             <tr>
-                <td colspan="4">No Result</td>
+                <td colspan="3">No Result</td>
             </tr>
             {% endif %}
         </table>
-
-        <div id="myModal" class="modal">
-            <div class="modal-content">
-                <span class="close" id="close">&times;</span>
-                <h2>Payment Details</h2>
-                <p id="paymentInfo"></p>
-            </div>
-        </div>
     </div>
 
+    <script>
+        function filterTable(inputId, tableId) {
+            var input, filter, table, tr, td, i, j, txtValue;
+            input = document.getElementById(inputId);
+            filter = input.value.toUpperCase();
+            table = document.getElementById(tableId);
+            tr = table.getElementsByTagName("tr");
 
-</body>
-<script>
-
-    function openModal(transactionId, transactionType, amount) {
-        var modal = document.getElementById('myModal');
-        var paymentInfo = document.getElementById('paymentInfo');
-
-        paymentInfo.innerHTML =
-            "Transaction Type: " + transactionType + "<br>" +
-            "Amount to Pay: " + amount;
-
-        modal.style.display = "block";
-
-        var span = document.getElementById("close");
-        span.onclick = function () {
-            modal.style.display = "none";
-        }
-
-        window.onclick = function (event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
-        }
-    }
-
-    document.onkeydown = function (evt) {
-        evt = evt || window.event;
-        var isEscape = false;
-        if ("key" in evt) {
-            isEscape = (evt.key === "Escape" || evt.key === "Esc");
-        } else {
-            isEscape = (evt.keyCode === 27);
-        }
-        if (isEscape) {
-            var modal = document.getElementById('myModal');
-            modal.style.display = "none";
-        }
-    };
-
-    function filterTable(inputId, tableId) {
-        var input, filter, table, tr, td, i, j, txtValue;
-        input = document.getElementById(inputId);
-        filter = input.value.toUpperCase();
-        table = document.getElementById(tableId);
-        tr = table.getElementsByTagName("tr");
-
-        // Loop through all table rows, including the first row (header row)
-        for (i = 0; i < tr.length; i++) {
-            td = tr[i].getElementsByTagName("td");
-            // Start from index 0 since the first row is included
-            for (j = 0; j < td.length; j++) {
-                txtValue = td[j].textContent || td[j].innerText;
-                if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                    tr[i].style.display = "";
-                    break;
-                } else {
-                    tr[i].style.display = "none";
-                }
-            }
-        }
-    }
-
-    function sortTable(columnIndex, tableId) {
-        var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
-        table = document.getElementById(tableId);
-        switching = true;
-        dir = "asc"; // Set the sorting direction to ascending by default
-
-        while (switching) {
-            switching = false;
-            rows = table.rows;
-
-            for (i = 1; i < (rows.length - 1); i++) {
-                shouldSwitch = false;
-                x = rows[i].getElementsByTagName("td")[columnIndex];
-                y = rows[i + 1].getElementsByTagName("td")[columnIndex];
-
-                if (dir == "asc") {
-                    if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
-                        shouldSwitch = true;
+            // Loop through all table rows, including the first row (header row)
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td");
+                // Start from index 0 since the first row is included
+                for (j = 0; j < td.length; j++) {
+                    txtValue = td[j].textContent || td[j].innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
                         break;
-                    }
-                } else if (dir == "desc") {
-                    if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
-                        shouldSwitch = true;
-                        break;
+                    } else {
+                        tr[i].style.display = "none";
                     }
                 }
             }
-            if (shouldSwitch) {
-                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-                switching = true;
-                switchcount++;
-            } else {
-                if (switchcount == 0 && dir == "asc") {
-                    dir = "desc";
+        }
+
+        function sortTable(columnIndex, tableId) {
+            var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+            table = document.getElementById(tableId);
+            switching = true;
+            dir = "asc"; // Set the sorting direction to ascending by default
+
+            while (switching) {
+                switching = false;
+                rows = table.rows;
+
+                for (i = 1; i < (rows.length - 1); i++) {
+                    shouldSwitch = false;
+                    x = rows[i].getElementsByTagName("td")[columnIndex];
+                    y = rows[i + 1].getElementsByTagName("td")[columnIndex];
+
+                    if (dir == "asc") {
+                        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                            shouldSwitch = true;
+                            break;
+                        }
+                    } else if (dir == "desc") {
+                        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                            shouldSwitch = true;
+                            break;
+                        }
+                    }
+                }
+                if (shouldSwitch) {
+                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
                     switching = true;
+                    switchcount++;
+                } else {
+                    if (switchcount == 0 && dir == "asc") {
+                        dir = "desc";
+                        switching = true;
+                    }
                 }
             }
         }
-    }
-</script>
+    </script>
+</body>
 
 </html>
