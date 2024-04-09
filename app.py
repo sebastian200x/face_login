@@ -685,7 +685,42 @@ def admin_payment_arrangement():
     )
     new = new.fetchall()
 
-    return adminredirect("admin/payment_arrangement.html", new=new)
+    old = conn.cursor()
+    old.execute(
+        """
+        SELECT
+            prop.*,
+            userinfo.*
+        FROM
+            tbl_property prop
+        LEFT JOIN tbl_userinfo userinfo ON prop.user_id = userinfo.user_id
+        LEFT JOIN tbl_useracc useracc ON prop.user_id = useracc.user_id
+        WHERE
+            userinfo.user_id IN (
+                SELECT
+                    user_id
+                FROM
+                    tbl_transaction
+                WHERE
+                    MONTH(due_date) != MONTH(CURRENT_DATE())
+            )
+            AND prop.total IS NOT NULL
+            AND useracc.is_admin = 'no'
+            AND useracc.is_deleted = 'no'
+            AND useracc.is_verified = 'yes'
+            AND userinfo.user_id NOT IN (
+                SELECT
+                    user_id
+                FROM
+                    tbl_transaction
+                WHERE
+                    transc_type = 'arrangement'
+            );
+        """
+    )
+    old = old.fetchall()
+
+    return adminredirect("admin/payment_arrangement.html", new=new, old=old)
 
 
 @app.route("/admin/payment_arrange/<int:id>", methods=["POST", "GET"])
@@ -1100,17 +1135,17 @@ def members_upload_proof():
             if not payment_id:
                 flash("Payment ID not found.", "error")
                 return redirect(url_for("payment"))
-            
-            directory = './static/proof/'
-            sql_directory = './proof/'
-            
+
+            directory = "./static/proof/"
+            sql_directory = "./proof/"
+
             filename = secure_filename(f"{payment_id}.jpg")
             file.save(os.path.join(directory, filename))
             directory_path = os.path.join(sql_directory, filename)
 
             now = datetime.now()
             sql_now = now.strftime("%Y-%m-%d %H:%M:%S")
-            
+
             cursor.execute(
                 "UPDATE tbl_transaction SET proof = %s, date = %s, transc_type = 'Gcash', is_verified = 'no', amount = %s WHERE transac_id = %s",
                 (directory_path, sql_now, amount, payment_id),
@@ -1121,6 +1156,7 @@ def members_upload_proof():
 
     flash("No file selected or invalid file format.", "error")
     return redirect(url_for("members_payment_history"))
+
 
 @app.route("/members/payment_history", methods=["POST", "GET"])
 def members_payment_history():

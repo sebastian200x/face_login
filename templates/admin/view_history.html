@@ -16,7 +16,7 @@
             <div class="modal-line">
                 <div class="modal-label">Name:</div>
                 <div class="modal-value">
-                    {{ transaction[14] }}, {{ transaction[13] }} {{ transaction[12] }}
+                    {{ transaction[14] }}, {{ transaction[12] }} {{ transaction[13] }}
                 </div>
             </div>
             <div class="modal-line">
@@ -35,6 +35,22 @@
                 <div class="modal-label">Date Paid:</div>
                 <div class="modal-value">{{ transaction[5] }}</div>
             </div>
+            {% if transaction[3] == 'Cash' %}
+            <div class="modal-line">
+                <div class="modal-label">Code:</div>
+                <div class="modal-value">{{ transaction[8] }}</div>
+            </div>
+            {% else %}
+            <div class="modal-line">
+                <div class="modal-label">Proof:</div>
+                <div class="modal-value">
+                    <img src="{{ url_for('static', filename=transaction[9]) }}" alt="Proof" class="proof"
+                        draggable="false">
+                </div>
+            </div>
+            {% endif %}
+
+
             <a href="/admin/payment_history" class="go-back">
                 < Back</a>
         </div>

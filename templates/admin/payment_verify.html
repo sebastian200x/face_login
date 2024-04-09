@@ -29,10 +29,20 @@
                 <label for="amount">Amount: ₱</label>
                 <input type="number" id="amount" name="amount" value="{{to_verifies[2]}}" required>
             </div>
+            {% if to_verifies[3] == 'Cash' %}
             <div class="form-group cash-verify">
                 <label for="code">Enter the code to verify the payment:</label>
                 <input type="text" id="code" name="code" required>
             </div>
+            {% else %}
+            <div class="form-group cash-verify">
+                <img src="{{ url_for('static', filename=to_verifies[9]) }}" alt="Proof" class="proof" draggable="false">
+            </div>
+            {% endif %}
+
+
+
+
             <input type="submit" class="button" value="Verify Payment">
         </form>
         {% endfor %}
