@@ -382,6 +382,14 @@ def dashboard():
         transac_to_verify = 0
 
     cursor.execute(
+        "SELECT COUNT(*) FROM tbl_transaction WHERE is_verified = 'yes' AND (transc_type = 'cash' OR transc_type = 'gcash')"
+    )
+    verified_transac = cursor.fetchone()[0]
+
+    if not transac_to_verify:
+        transac_to_verify = 0
+
+    cursor.execute(
         "SELECT COUNT(*) FROM tbl_transaction WHERE transc_type = 'arrangement'"
     )
     unpaid_members = cursor.fetchone()[0]
@@ -418,6 +426,7 @@ def dashboard():
         to_verify=to_verify,
         deleted=deleted,
         transac_to_verify=transac_to_verify,
+        verified_transac=verified_transac,
         unpaid_members=unpaid_members,
         total_earnings=total_earnings,
     )
@@ -653,9 +662,6 @@ def update_info(id):
     return redirect(url_for("admin_members_info"))
 
 
-
-
-
 @app.route("/admin/payment_arrangement", methods=["POST", "GET"])
 def admin_payment_arrangement():
     new = conn.cursor()
@@ -747,6 +753,7 @@ def admin_payment_verification():
     unverified = unverified.fetchall()
     return adminredirect("/admin/payment_verification.html", unverified=unverified)
 
+
 @app.route("/admin/payment_verify/<int:id>", methods=["POST", "GET"])
 def admin_payment_verify(id):
     to_verify = conn.cursor()
@@ -761,29 +768,30 @@ def admin_payment_verify(id):
             AND 
                 tbl_userinfo.user_id = tbl_transaction.user_id 
             """,
-            (id,),
+        (id,),
     )
     to_verify = to_verify.fetchall()
-    
-    if request.method == 'POST':
-        session['payment_id'] = id
-        session['member'] = to_verify[0][1]
-    
+
+    if request.method == "POST":
+        session["payment_id"] = id
+        session["member"] = to_verify[0][1]
+
     return adminredirect("/admin/payment_verify.html", to_verify=to_verify)
+
 
 @app.route("/admin/payment_verified", methods=["POST", "GET"])
 def admin_payment_verified():
-    
-    if 'member' in session:
-        member = session['member']
+
+    if "member" in session:
+        member = session["member"]
     else:
         return redirect("/admin/payment_history")
-    
-    if 'payment_id' in session:
-        id = session['payment_id']
+
+    if "payment_id" in session:
+        id = session["payment_id"]
     else:
         return redirect("/admin/payment_history")
-    
+
     cursor = conn.cursor()
     cursor.execute(
         """
@@ -792,14 +800,14 @@ def admin_payment_verified():
         (id,),
     )
     data = cursor.fetchone()
-    
+
     if data:
         sqlbalance = data[2]
         sqlcode = data[8]
-        
-        if request.method == 'POST':
+
+        if request.method == "POST":
             amount = int(request.form.get("amount"))
-            
+
             if amount <= sqlbalance:
                 if request.form.get("code") == sqlcode:
                     update_cursor = conn.cursor()
@@ -811,29 +819,29 @@ def admin_payment_verified():
                         date = NOW()
                         WHERE transac_id = %s
                         """,
-                        (amount,id,),
+                        (
+                            amount,
+                            id,
+                        ),
                     )
                     conn.commit()
                     return redirect("/admin/payment_history")
                 else:
-                    flash('Code is incorrect, please check your code and try again.', 'error')
+                    flash(
+                        "Code is incorrect, please check your code and try again.",
+                        "error",
+                    )
                     return redirect(url_for("admin_payment_verify", id=id))
             else:
-                flash('The amount you entered is greater than the amount of debt, please try again.', 'error')
+                flash(
+                    "The amount you entered is greater than the amount of debt, please try again.",
+                    "error",
+                )
                 return redirect(url_for("admin_payment_verify", id=id))
-            
+
         return redirect("/admin/payment_verify.html")
     else:
         return redirect("/admin/payment_verification.html")
-
-
-
-    
-    
-    
-
-
-
 
 
 # update_cursor = conn.cursor()
@@ -847,6 +855,7 @@ def admin_payment_verified():
 #                 (id,),
 #             )
 #             conn.commit()
+
 
 @app.route("/admin/payment_history", methods=["POST", "GET"])
 def admin_payment_history():
@@ -865,6 +874,26 @@ def admin_payment_history():
     history = history.fetchall()
     return adminredirect("/admin/payment_history.html", history=history)
 
+
+@app.route("/admin/view_history/<int:id>", methods=["GET", "POST"])
+def admin_view_history(id):
+    cursor = conn.cursor()
+    cursor.execute(
+        """
+        SELECT
+            tbl_transaction.*,
+            tbl_userinfo.*
+        FROM
+            tbl_transaction
+        JOIN
+            tbl_userinfo ON tbl_userinfo.user_id = tbl_transaction.user_id
+        WHERE
+            transac_id = %s
+        """,
+        (id,),
+    )
+    transaction = cursor.fetchone()
+    return adminredirect("/admin/view_history.html", transaction=transaction)
 
 
 @app.route("/members/home")
@@ -888,23 +917,23 @@ def members_home():
     unpaid_cursor.fetchall()
     unpaid_count = unpaid_cursor.rowcount
 
-    paid_cursor = conn.cursor()
-    paid_cursor.execute(
+    payment_cursor = conn.cursor()
+    payment_cursor.execute(
         """
         SELECT
             *
         FROM
             tbl_transaction
         WHERE
-            amount IS NOT NULL AND DATE IS NOT NULL AND is_verified = 'yes' AND transc_type = 'gcash' OR transc_type = 'cash' AND user_id = %s;
+            user_id = %s;
         """,
         (id,),
     )
-    paid_cursor.fetchall()
-    paid_count = paid_cursor.rowcount
+    payment_cursor.fetchall()
+    payment_count = payment_cursor.rowcount
 
     return memberredirect(
-        "members/home.html", paid_count=paid_count, unpaid_count=unpaid_count
+        "members/home.html", paid_count=payment_count, unpaid_count=unpaid_count
     )
 
 
@@ -1061,13 +1090,45 @@ def members_payment_gcash():
     return memberredirect("members/payment_gcash.html", gcash=payment_data)
 
 
+@app.route("/members/upload_proof", methods=["POST", "GET"])
+def members_upload_proof():
+    amount = request.form.get("amount")
+    if "proof" in request.files:
+        file = request.files["proof"]
+        if file.filename != "":
+            payment_id = session.get("payment_id")
+            if not payment_id:
+                flash("Payment ID not found.", "error")
+                return redirect(url_for("payment"))
+            
+            directory = './static/proof/'
+            sql_directory = './proof/'
+            
+            filename = secure_filename(f"{payment_id}.jpg")
+            file.save(os.path.join(directory, filename))
+            directory_path = os.path.join(sql_directory, filename)
+
+            now = datetime.now()
+            sql_now = now.strftime("%Y-%m-%d %H:%M:%S")
+            
+            cursor.execute(
+                "UPDATE tbl_transaction SET proof = %s, date = %s, transc_type = 'Gcash', is_verified = 'no', amount = %s WHERE transac_id = %s",
+                (directory_path, sql_now, amount, payment_id),
+            )
+            conn.commit()
+            flash("Proof uploaded successfully.", "success")
+            return redirect(url_for("members_payment_history"))
+
+    flash("No file selected or invalid file format.", "error")
+    return redirect(url_for("members_payment_history"))
+
 @app.route("/members/payment_history", methods=["POST", "GET"])
 def members_payment_history():
     if session.get("payment_id"):
         session.pop("payment_id")
-        
+
     id = session.get("user_id")
-        
+
     unverified = conn.cursor()
     unverified.execute(
         """
@@ -1076,17 +1137,15 @@ def members_payment_history():
         FROM
             tbl_transaction
         WHERE
-            transc_type IN ('gcash', 'cash')
+            transc_type IN ('gcash', 'Cash')
             AND user_id = %s
             AND is_verified = 'no'
             AND (code IS NOT NULL OR proof IS NOT NULL)
         """,
-        (
-            id,
-        ),
+        (id,),
     )
     unverified = unverified.fetchall()
-    
+
     verified = conn.cursor()
     verified.execute(
         """
@@ -1100,15 +1159,52 @@ def members_payment_history():
             AND is_verified = 'yes' 
             AND (code IS NOT NULL OR proof IS NOT NULL)
         """,
-        (
-            id,
-        ),
+        (id,),
     )
     verified = verified.fetchall()
-    
-    
-    return memberredirect("members/payment_history.html", unverified=unverified, verified=verified)
 
+    return memberredirect(
+        "/members/payment_history.html", unverified=unverified, verified=verified
+    )
+
+
+@app.route("/members/view_history/<int:id>", methods=["POST"])
+def members_view_history(id):
+    cursor = conn.cursor()
+    cursor.execute(
+        """
+        SELECT
+            tbl_transaction.*,
+            tbl_userinfo.*
+        FROM
+            tbl_transaction
+        JOIN
+            tbl_userinfo ON tbl_userinfo.user_id = tbl_transaction.user_id
+        WHERE
+            transac_id = %s
+        """,
+        (id,),
+    )
+    transaction = cursor.fetchone()
+    return memberredirect("/members/view_history.html", transaction=transaction)
+
+
+@app.route("/members/view_proof/<int:id>", methods=["POST", "GET"])
+def members_view_proof(id):
+    cursor = conn.cursor()
+    cursor.execute(
+        """
+        SELECT
+            proof
+        FROM
+            tbl_transaction
+        WHERE
+            transac_id = %s
+        """,
+        (id,),
+    )
+    proof = cursor.fetchone()
+    return memberredirect("/members/view_proof.html", proof=proof)
 
 
 @app.route("/facelogin", methods=["GET", "POST"])

@@ -45,6 +45,7 @@ input[type="radio"] {
     margin: 25px auto;
     padding: 10px 30px;
     border-radius: 5px;
+    cursor: pointer;
 }
 
 .pay:hover {

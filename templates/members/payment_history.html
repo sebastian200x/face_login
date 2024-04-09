@@ -20,7 +20,7 @@
                 <tr>
                     <th>Transaction Type</th>
                     <th>Amount to pay</th>
-                    <th>Code</th>
+                    <th>Code / Proof</th>
                 </tr>
             </thead>
             <tbody>
@@ -29,7 +29,16 @@
                     {% for unverifieds in unverified %}
                     <td>{{ unverifieds[3] }}</td>
                     <td><span id="formattedAmount">{{ unverifieds[2] }}</span></td>
+                    {% if unverifieds[3] == 'Cash' %}
                     <td>{{ unverifieds[8] }}</td>
+                    {% else %}
+                    <td>
+                        <form action="/members/view_proof/{{unverifieds[0]}}" method="POST">
+                            <input type="submit" class="btn-view" value="View   ">
+                        </form>
+                    </td>
+                    {% endif %}
+
                     {%endfor%}
                     {% else %}
                     <td colspan="4">No Result</td>
@@ -52,11 +61,13 @@
                 <tr>
                     {% if verified %}
                     {% for verifieds in verified %}
-                    <td>{{ verifieds[4] }}</td>
-                    <td><span id="formattedAmount">{{ verifieds[2] }}</span></td>
                     <td>{{ verifieds[3] }}</td>
+                    <td><span id="formattedAmount">{{ verifieds[2] }}</span></td>
+                    <td>{{ verifieds[4] }}</td>
                     <td>
-                        <button class="btn-view">View</button>
+                        <form action="/members/view_history/{{verifieds[0]}}" method="POST">
+                            <input type="submit" class="btn-view" value="View">
+                        </form>
                     </td>
                     {%endfor%}
                     {% else %}

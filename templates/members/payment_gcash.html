@@ -10,18 +10,21 @@
 </head>
 
 <body style="margin-top: 100px;">
+
     <div class="payment-forms">
-        <form method="POST" action="">
+        <form action="/members/upload_proof" method="POST" enctype="multipart/form-data">
             <h1 class="center">G-Cash Payment</h1>
-            {% if gcash%}
+            {% if gcash %}
             {% for g in gcash %}
             <div class="pay-detail">
-                <h3>Payment Details: </h3><br>
+                <h3>Payment Details:</h3><br>
                 <h3>Amount to pay: <span id="formattedAmount">{{ g[2] }}</span></h3>
-                <h3>Due date: {{g[6].strftime('%B %d, %Y')}}</h3>
+                <h3>Due date: {{ g[6].strftime('%B %d, %Y') }}</h3>
             </div>
             <br>
-            <img src="{{ url_for('static', filename='images/gcash.jpg') }}" alt="gcash-qr" class="qr" id="qrCode">
+            <img src="{{ url_for('static', filename='images/gcash.jpg') }}" alt="gcash-qr" class="qr" id="qrCode"
+                draggable="false">
+            <p style="text-align: center; font-weight: bold; padding: 5px;">Please scan using G-cash app</p>
             <div class="copy-container" id="copy">
                 <span class="copy-text">09564629898</span>
                 <button class="copy-button" onclick="copyText()"><i class="fa-regular fa-copy"></i> COPY</button>
@@ -29,74 +32,73 @@
             <br>
             <div class="payment-details">
                 <div class="rows-left">
-                    <h3 class="det">Proof: </h3>
+                    <h3 class="det">Proof:</h3>
                 </div>
                 <div class="rows">
                     <div class="file-input-container">
-                        <input class="file-input" type="file" name="proof" id="proof" accept="image/*">
+                        <input class="file-input" type="file" name="proof" id="proof" accept="image/*" required>
                         <label class="file-input-label" for="proof">Choose Picture</label>
                     </div>
                 </div>
-                <!-- <div class="rows-left">
-                <h3 class="det">Paid to: </h3>
-            </div>
-            <div class="rows">
-                <input type="text" name="paid_to" title="Name of the receiver" placeholder="Name of the payment recipient (Leave)">
-            </div> -->
                 <div class="rows-left">
-                    <h3 class="det">Amount: </h3>
+                    <h3 class="det">Amount:</h3>
                 </div>
                 <div class="rows">
-                    <input type="text" name="amount" value="{{g[2]}}" title="Please put the exact amount"
+                    <input type="text" name="amount" value="{{ g[2] }}" title="Please put the exact amount"
                         placeholder="Amount of the payment" required>
                 </div>
+                <input class="pay" type="submit" value="Pay">
             </div>
-            {%endfor%}
+            {% endfor %}
             {% endif %}
-
-            <input class="pay" type="submit" value="Pay">
         </form>
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                var qrCode = document.getElementById("qrCode");
+                var copyContainer = document.getElementById("copy");
+                if (qrCode) qrCode.style.display = 'none';
+                if (copyContainer) copyContainer.style.display = 'block'; // Adjust this based on your layout
+            } else {
+                var qrCode = document.getElementById("qrCode");
+                var copyContainer = document.getElementById("copy");
+                if (qrCode) qrCode.style.display = 'block';
+                if (copyContainer) copyContainer.style.display = 'none'; // Adjust this based on your layout
+            }
+
+            function addCommas(number) {
+                return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            }
+
+            var amountElement = document.getElementById("formattedAmount");
+            amountElement.innerText = addCommas(amountElement.innerText);
+        });
+
+        function copyText() {
+            // Get the text to copy
+            const textToCopy = document.querySelector('.copy-text');
+
+            // Create a textarea element to hold the text temporarily
+            const textarea = document.createElement('textarea');
+            textarea.value = textToCopy.innerText;
+            document.body.appendChild(textarea);
+
+            // Select the text in the textarea
+            textarea.select();
+            textarea.setSelectionRange(0, 99999); // For mobile devices
+
+            // Copy the selected text to the clipboard
+            document.execCommand('copy');
+
+            // Remove the textarea from the DOM
+            document.body.removeChild(textarea);
+
+            // Optionally, provide feedback to the user
+            alert('Text copied to clipboard!');
+        }
+    </script>
 </body>
 
 </html>
-
-<script>
-
-    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-        qrCode.style.display = 'none';
-    }
-    else {
-        copy.style.display = 'none';
-    }
-
-    function addCommas(number) {
-        return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    }
-
-    var amountElement = document.getElementById("formattedAmount");
-    amountElement.innerText = addCommas(amountElement.innerText);
-
-    function copyText() {
-        // Get the text to copy
-        const textToCopy = document.querySelector('.copy-text');
-
-        // Create a textarea element to hold the text temporarily
-        const textarea = document.createElement('textarea');
-        textarea.value = textToCopy.innerText;
-        document.body.appendChild(textarea);
-
-        // Select the text in the textarea
-        textarea.select();
-        textarea.setSelectionRange(0, 99999); // For mobile devices
-
-        // Copy the selected text to the clipboard
-        document.execCommand('copy');
-
-        // Remove the textarea from the DOM
-        document.body.removeChild(textarea);
-
-        // Optionally, provide feedback to the user
-        alert('Text copied to clipboard!');
-    }
-</script>

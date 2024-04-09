@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View History</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/view-history.css') }}">
+    {% include 'navbar.html' %}
+</head>
+
+<body style="padding-top: 100px;">
+    <div class="modal-container">
+        <div class="modal-content">
+            <h2 style="padding-bottom: 20px; text-align: center;">Transaction History</h2>
+            <div class="modal-line">
+                <div class="modal-label">Name:</div>
+                <div class="modal-value">
+                    {{ transaction[14] }}, {{ transaction[13] }} {{ transaction[12] }}
+                </div>
+            </div>
+            <div class="modal-line">
+                <div class="modal-label">Transaction Type:</div>
+                <div class="modal-value">{{ transaction[3] }}</div>
+            </div>
+            <div class="modal-line">
+                <div class="modal-label">Date:</div>
+                <div class="modal-value">{{ transaction[5] }}</div>
+            </div>
+            <div class="modal-line">
+                <div class="modal-label">Amount:</div>
+                <div class="modal-value">{{ transaction[4] }}</div>
+            </div>
+            <div class="modal-line">
+                <div class="modal-label">Date Paid:</div>
+                <div class="modal-value">{{ transaction[5] }}</div>
+            </div>
+            <a href="/admin/payment_history" class="go-back">
+                < Back</a>
+        </div>
+    </div>
+
+
+</body>
+
+</html>
