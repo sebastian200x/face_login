@@ -169,6 +169,17 @@ label {
     width: 49%;
 }
 
+.double-half {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+
+}
+
+.personal-half {
+    width: 49%;
+}
+
 @media (max-width: 660px) {
     .left {
         display: none;

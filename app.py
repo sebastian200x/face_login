@@ -163,6 +163,10 @@ def active_sessions():
 
 # Custom filter
 
+# Define a context processor to make 'today' available in all templates
+@app.context_processor
+def inject_today():
+    return {'today': date.today()}
 
 @app.route("/")
 def home():
@@ -271,6 +275,7 @@ def register():
         last_name = request.form["last_name"].capitalize()
 
         gender = request.form["gender"].capitalize()
+        bday = request.form["birthday"]
 
         password = request.form["password"]
         confirm_password = request.form["confirm"]
@@ -290,8 +295,8 @@ def register():
             )
             id = cursor.lastrowid
             cursor.execute(
-                "INSERT INTO tbl_userinfo (user_id, given_name, middle_name, last_name, gender) VALUES (%s, %s, %s, %s, %s)",
-                (id, given_name, middle_name, last_name, gender),
+                "INSERT INTO tbl_userinfo (user_id, given_name, middle_name, last_name, gender, bday) VALUES (%s, %s, %s, %s, %s, %s)",
+                (id, given_name, middle_name, last_name, gender, bday),
             )
             conn.commit()
             return render_template("login.html", messager="success")

@@ -53,13 +53,22 @@
                         <div class="personal-info-col-last"><input type="text" name="last_name" required
                                 placeholder="Last Name"></div>
                     </div>
-                    <label for="gender">Gender
-                        <select name="gender" name="gender" required>
-                            <option value="" selected hidden>Please select gender</option>
-                            <option value="Male">Male</option>
-                            <option value="Female">Female</option>
-                        </select>
-                    </label>
+                    <div class="double-half">
+                        <div class="personal-half">
+                            <label for="gender">Gender
+                                <select name="gender" name="gender" required>
+                                    <option value="" selected hidden>Please select gender</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                </select>
+                            </label>
+                        </div>
+                        <div class="personal-half">
+                            <label for="birthday">Birthday
+                                <input type="date" name="birthday" max="{{ today }}" id="birthday" required>
+                            </label>
+                        </div>
+                    </div>
                 </div>
                 <div class="account-information">
                     <br>
@@ -72,19 +81,27 @@
                     <div class="account-info">
                         <div class="account-info-col"><label for="password">Password</label></div>
                         <div class="account-info-col"><label for="confirm-password">Confirm Password</label></div>
-                        <div class="account-info-col"> <input type="password" name="password" required
-                                placeholder="Password"
-                                class="{% if (messager == 1 ) or (messager == 3 ) %}wrong{% endif %}"></div>
-                        <div class="account-info-col-last"><input type="password" name="confirm" required
-                                placeholder="Confirm Password"
-                                class="{% if (messager == 2 ) or (messager == 3 ) %}wrong{% endif %}"></div>
+                        <div class="account-info-col">
+                            <input type="password" name="password" required placeholder="Password"
+                                pattern="(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d!@#$%^&*()_+]{8,}"
+                                title="Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, and 1 symbol, and be at least 8 characters long"
+                                class="{% if (messager == 1 ) or (messager == 3 ) %}wrong{% endif %}">
+
+                        </div>
+                        <div class="account-info-col-last">
+                            <input type="password" name="confirm" required placeholder="Confirm Password"
+                                class="{% if (messager == 2 ) or (messager == 3 ) %}wrong{% endif %}"
+                                pattern="(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d!@#$%^&*()_+]{8,}"
+                                title="Password must contain at least 1 uppercase letter, 1 lowercase letter, 1 number, and 1 symbol, and be at least 8 characters long">
+                        </div>
                     </div>
 
                     <label for="email">Email
                         <input type="email" name="email" placeholder="Email" required>
                     </label>
 
-                    <button class="button" id="hoverinbtn" type="submit">Register</button>
+                    <!-- <button class="button" id="hoverinbtn" type="submit">Register</button> -->
+                    <input type="submit" value="Register">
                     <a href="/login" class="login">Back</a>
 
             </form>
